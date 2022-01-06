@@ -1,0 +1,25 @@
+.DS_Store
+*.log
+
+# for web
+web/node_modules
+web/dist/*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+tests/**/coverage/
+
+# for api
+api/vendor
+api/public/apidoc
+
+# for docker
+docker/mysql/data/*
+mysql/data/*
+
+# editor
+.idea
+.vscode
+
+# without ignore
+!.gitkeep

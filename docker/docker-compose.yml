@@ -1,0 +1,42 @@
+version: "3.7"
+services:
+  api:
+    image: admin_api_img
+    build:
+      context: ${ADMIN_DIR}/api
+      dockerfile: Dockerfile
+    container_name: admin-api
+    networks:
+      admin-net:
+        aliases:
+          - admin-api-fpm
+    volumes:
+      - ${ADMIN_DIR}:/work # local path : docker container path
+    env_file:
+      - ./app.env 
+  nginx:
+    image: admin_nginx_img
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: admin-nginx
+    volumes:
+      - ${ADMIN_DIR}/docker/nginx/conf.d.dev:/etc/nginx/conf.d
+      - ${ADMIN_DIR}:/work
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    networks:
+      admin-net:
+        aliases:
+          - nginx
+    env_file:
+      - ./app.env
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+networks:
+  admin-net:

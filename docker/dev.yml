@@ -1,0 +1,60 @@
+version: "3.7"
+services:
+  api:
+    image: admin_api_img
+    build:
+      context: ${ADMIN_DIR}/api
+      dockerfile: Dockerfile
+    container_name: admin-api
+    networks:
+      admin-net:
+        aliases:
+          - admin-api-fpm
+    volumes:
+      - ${ADMIN_DIR}/api:/work/api
+    env_file:
+      - ./app.env
+  nginx:
+    image: admin_nginx_img
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: admin-nginx
+    volumes:
+      - ${ADMIN_DIR}/docker/nginx/conf.d:/etc/nginx/conf.d
+      - ${ADMIN_DIR}:/work
+    ports:
+      - "28080:80"
+    depends_on:
+      - api
+    networks:
+      admin-net:
+        aliases:
+          - nginx
+  redis:
+    image: admin_redis_img
+    build: ./redis
+    container_name: admin-redis
+    ports:
+      - "127.0.0.1:26379:6379"
+    networks:
+      admin-net:
+        aliases:
+          - redis
+  mysql:
+    image: mysql:8.0
+    container_name: admin-mysql
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: admin123456
+      TZ: Asia/Hong_Kong
+    ports:
+      - "127.0.0.1:23306:3306"
+    volumes:
+      - ${ADMIN_DIR}/docker/mysql/data:/var/lib/mysql
+    networks:
+      admin-net:
+        aliases:
+          - mysql
+networks:
+  admin-net:
