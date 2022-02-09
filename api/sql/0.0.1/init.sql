@@ -34,6 +34,9 @@ CREATE TABLE `group_user` (
     KEY `idx_gid` (`gid`),
     KEY `idx_uid` (`uid`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8;
+INSERT INTO `group_user` (`id`, `uid`, `gid`)
+VALUES
+	(1, 1, 1);
 
 CREATE TABLE `group` (
     `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
