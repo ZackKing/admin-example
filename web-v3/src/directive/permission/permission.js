@@ -1,9 +1,10 @@
-import store from '@/store'
+import { usePermissionStore } from '@/store/permission'
 import { ElMessage } from 'element-plus'
 
 function checkPermission(el, binding) {
   const { value } = binding
-  const accessUrls = store.getters && store.getters.accessUrls
+  const store = usePermissionStore()
+  const accessUrls = store.accessUrls
 
   if (value && value instanceof Array) {
     if (value.length > 0) {
@@ -19,9 +20,8 @@ function checkPermission(el, binding) {
       // }
       // 提示方案
       if (!hasPermission) {
-        el.addEventListener('click', function(event) {
-          // 阻止所有点击事件
-          event.stopPropagation()
+        el.addEventListener('click', function (event) {
+          event.stopPropagation() // 阻止所有点击事件
           ElMessage({
             message: 'Access denied!',
             type: 'error',

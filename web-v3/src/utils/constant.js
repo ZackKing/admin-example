@@ -1,5 +1,5 @@
-import moment from 'moment'
-moment.locale('zh-cn')
+import dayjs from 'dayjs'
+dayjs.locale('zh-cn')
 
 class Constant {
   constructor() {
@@ -73,43 +73,43 @@ class Constant {
       shortcuts: [{
         text: 'yesterday',
         onClick(picker) {
-          const end = moment().add(-1, 'days').endOf('day')
-          const start = moment().add(-1, 'days').startOf('day')
+          const end = dayjs().add(-1, 'days').endOf('day')
+          const start = dayjs().add(-1, 'days').startOf('day')
           picker.$emit('pick', [start, end])
         }
       }, {
         text: 'Last 7 days',
         onClick(picker) {
-          const end = moment().endOf('day')
-          const start = moment().add(-7, 'days').startOf('day')
+          const end = dayjs().endOf('day')
+          const start = dayjs().add(-7, 'days').startOf('day')
           picker.$emit('pick', [start, end])
         }
       }, {
         text: 'Last 15 days',
         onClick(picker) {
-          const end = moment().endOf('day')
-          const start = moment().add(-15, 'days').startOf('day')
+          const end = dayjs().endOf('day')
+          const start = dayjs().add(-15, 'days').startOf('day')
           picker.$emit('pick', [start, end])
         }
       }, {
         text: 'Last 30 days',
         onClick(picker) {
-          const end = moment().endOf('day')
-          const start = moment().add(-30, 'days').startOf('day')
+          const end = dayjs().endOf('day')
+          const start = dayjs().add(-30, 'days').startOf('day')
           picker.$emit('pick', [start, end])
         }
       }, {
         text: 'This week',
         onClick(picker) {
-          const end = moment().weekday(6).endOf('day')
-          const start = moment().weekday(0).startOf('day')
+          const end = dayjs().weekday(6).endOf('day')
+          const start = dayjs().weekday(0).startOf('day')
           picker.$emit('pick', [start, end])
         }
       }, {
         text: 'This month',
         onClick(picker) {
-          const end = moment().endOf('month')
-          const start = moment().startOf('month')
+          const end = dayjs().endOf('month')
+          const start = dayjs().startOf('month')
           picker.$emit('pick', [start, end])
         }
       }]

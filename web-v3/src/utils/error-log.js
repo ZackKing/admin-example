@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import store from '@/store'
 import { isString, isArray } from '@/utils/validate'
 import settings from '@/settings'
 
@@ -19,15 +18,9 @@ function checkNeed() {
 }
 
 if (checkNeed()) {
-  Vue.config.errorHandler = function(err, vm, info, a) {
+  Vue.config.errorHandler = function (err, vm, info, a) {
     // just a hack
     Vue.nextTick(() => {
-      store.dispatch('errorLog/addErrorLog', {
-        err,
-        vm,
-        info,
-        url: window.location.href
-      })
       console.error(err, info)
     })
   }

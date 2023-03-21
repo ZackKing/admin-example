@@ -10,13 +10,13 @@ module.exports = {
   rules: {
     'vue/multi-word-component-names': 0,
     'vue/max-attributes-per-line': [2, {
-      'singleline': 6,      
+      'singleline': 6,
       'multiline': 1
     }],
     'vue/no-multiple-template-root': 0,
     'vue/singleline-html-element-content-newline': 'off',
-    'vue/multiline-html-element-content-newline':'off',
-    'vue/name-property-casing': ['error', 'PascalCase'],
+    'vue/multiline-html-element-content-newline': 'off',
+    // 'vue/name-property-casing': ['error', 'PascalCase'],
     'vue/no-v-html': 'off',
     'accessor-pairs': 2,
     'arrow-spacing': [2, {
@@ -40,7 +40,7 @@ module.exports = {
     'curly': [2, 'multi-line'],
     'dot-location': [2, 'property'],
     'eol-last': 2,
-    'eqeqeq': ['error', 'always', {'null': 'ignore'}],
+    'eqeqeq': ['error', 'always', { 'null': 'ignore' }],
     'generator-star-spacing': [2, {
       'before': true,
       'after': true
@@ -165,7 +165,11 @@ module.exports = {
       'after': true
     }],
     'space-before-blocks': [2, 'always'],
-    'space-before-function-paren': [2, 'never'],
+    'space-before-function-paren': [2, {
+      'anonymous': 'always',
+      'named': 'never',
+      'asyncArrow': 'always',
+    }],
     'space-in-parens': [2, 'never'],
     'space-infix-ops': 2,
     'space-unary-ops': [2, {

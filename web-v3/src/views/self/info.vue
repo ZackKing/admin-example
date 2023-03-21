@@ -147,7 +147,7 @@ export default {
       }
     },
     logout() {
-      this.$store.dispatch('user/resetToken').then(() => {
+      this.$store.user.resetToken().then(() => {
         location.reload()
       })
     }

@@ -30,7 +30,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 
@@ -39,19 +38,13 @@ export default {
     Breadcrumb,
     Hamburger
   },
-  computed: {
-    ...mapGetters([
-      'sidebar',
-      'avatar',
-      'name'
-    ])
-  },
+  computed: {},
   methods: {
     toggleSideBar() {
-      this.$store.dispatch('app/toggleSideBar')
+      this.$store.app.toggleSideBar()
     },
     logout() {
-      this.$store.dispatch('user/resetToken').then(() => {
+      this.$store.user.resetToken().then(() => {
         location.reload()
       })
     }

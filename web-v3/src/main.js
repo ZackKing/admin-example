@@ -5,11 +5,14 @@ import { createApp } from 'vue'
 import App from '@/App'
 const app = createApp(App)
 
+import { createPinia } from 'pinia'
+app.use(createPinia())
+import store from '@/store'
+app.config.globalProperties.$store = store.install()
+// app.use(store)
+
 import router from '@/router'
 app.use(router)
-
-import store from '@/store'
-app.use(store)
 
 import svgIcon from '@/components/SvgIcon.vue'
 app.component('SvgIcon', svgIcon)

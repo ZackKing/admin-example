@@ -1,16 +1,12 @@
 import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import eslint from '@rollup/plugin-eslint'
+import vuePlugin from '@vitejs/plugin-vue'
 import path from 'path'
-import { svgBuilder } from './src/plugins/svgBuilder'; 
+import { svgBuilder } from './src/plugins/svgBuilder'
 
-// https://vitejs.dev/config/
+// config detail in https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    vue(),
-    eslint({
-      include: 'src/*.+(vue|js|jsx|ts|tsx)',
-    }),
+    vuePlugin(),
     svgBuilder('./src/icons/svg/')
   ],
 
@@ -22,8 +18,8 @@ export default defineConfig({
   },
 
   server: {
-    host: '127.0.0.1',
-    port: 8081,
+    host: '0.0.0.0',
+    port: 8088,
     strictPort: true,
   },
 
@@ -35,5 +31,6 @@ export default defineConfig({
     'process.env': {
       BASE_API: '/'
     }
-  }
+  },
+
 })

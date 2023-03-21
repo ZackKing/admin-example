@@ -1,8 +1,10 @@
 import axios from 'axios'
 import { ElMessageBox, ElMessage } from 'element-plus'
-import store from '@/store'
 import { getToken } from '@/utils/auth'
 import router from '@/router'
+import { useUserStore } from '@/store/user'
+
+const RE_LOGIN_CODE = [10001, 10002, 10003]
 
 // create an axios instance
 const service = axios.create({
@@ -15,7 +17,8 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // before request sent
-    if (store.getters.token) {
+    const store = useUserStore()
+    if (store.token) {
       config.headers['ADMIN-TOKEN'] = getToken()
     }
     return config
@@ -40,15 +43,16 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
+    const store = useUserStore()
 
-    if (([10001, 10002, 10003].indexOf(res.code) !== -1)) {
+    if ((RE_LOGIN_CODE.indexOf(res.code) !== -1)) {
       if (router.currentRoute.path !== '/login') {
         ElMessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
           confirmButtonText: 'Re-Login',
           cancelButtonText: 'Cancel',
           type: 'warning'
         }).then(() => {
-          store.dispatch('user/resetToken').then(() => {
+          store.resetToken().then(() => {
             location.reload()
           })
         })

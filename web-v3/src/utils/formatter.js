@@ -1,6 +1,5 @@
-
 import _ from 'lodash'
-import moment from 'moment'
+import dayjs from 'dayjs'
 
 export function numFormatter(row, col, cv, idx) {
   const num = +cv
@@ -27,7 +26,7 @@ export function timeFormatter(row, col, cv, idx) {
 export function dateFormatter(row, col, cv, idx) {
   let str = '-'
   if (cv > 0) {
-    str = moment.unix(cv).format('YYYY/MM/DD HH:mm:ss')
+    str = dayjs.unix(cv).format('YYYY/MM/DD HH:mm:ss')
   }
   return str
 }

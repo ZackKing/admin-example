@@ -27,16 +27,16 @@ export default {
   mixins: [ResizeMixin],
   computed: {
     sidebar() {
-      return this.$store.state.app.sidebar
+      return this.$store.app.sidebar
     },
     device() {
-      return this.$store.state.app.device
+      return this.$store.app.device
     },
     fixedHeader() {
-      return this.$store.state.settings.fixedHeader
+      return this.$store.settings.fixedHeader
     },
     needTagsView() {
-      return this.$store.state.settings.tagsView
+      return this.$store.settings.tagsView
     },
     classObj() {
       return {
@@ -49,7 +49,7 @@ export default {
   },
   methods: {
     handleClickOutside() {
-      this.$store.dispatch('app/closeSideBar', { withoutAnimation: false })
+      this.$store.app.closeSideBar({ withoutAnimation: false })
     }
   }
 }

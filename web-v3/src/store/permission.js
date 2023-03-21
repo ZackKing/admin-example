@@ -1,20 +1,8 @@
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
 import { asyncRoutes, constantRoutes } from '@/router'
-import store from '@/store'
+import { useCommonStore } from './common'
 import _ from 'lodash'
-// import { deepClone } from '@/utils'
-
-/**
- * Use meta.role to determine if the current user has permission
- * @param roles
- * @param route
- */
-// function hasPermission(roles, route) {
-//   if (route.meta && route.meta.roles) {
-//     return roles.some(role => route.meta.roles.includes(role))
-//   } else {
-//     return true
-//   }
-// }
 
 /**
  * Filter asynchronous routing tables by recursion
@@ -69,40 +57,33 @@ export function filterAsyncRoutes(routes, apiRoutes, accessUrls) {
   return routes
 }
 
-const state = {
-  routes: [],
-  addRoutes: [],
-  accessUrls: []
-}
+export const usePermissionStore = defineStore('permission', () => {
+  const routes = ref([])
+  const addRoutes = ref([])
+  const accessUrls = ref([])
 
-const mutations = {
-  SET_ROUTES: (state, routes) => {
-    state.addRoutes = routes
-    state.routes = constantRoutes.concat(routes)
-  },
-  SET_ACCESS_URLS: (state, accessUrls) => {
-    state.accessUrls = accessUrls
-  }
-}
+  function generateRoutes() {
+    return new Promise(async (resolve) => {
+      const commonStore = useCommonStore()
+      const apiRoutes = await commonStore.getAccessRoutes()
+      const aUrls = []
+      const filterRoutes = filterAsyncRoutes(asyncRoutes, apiRoutes, aUrls)
 
-const actions = {
-  generateRoutes({ commit }, roles) {
-    return new Promise(async(resolve) => {
-      const apiRoutes = await store.dispatch('common/getAccessRoutes')
-      const accessUrls = []
-      const filterRoutes = filterAsyncRoutes(asyncRoutes, apiRoutes, accessUrls)
+      // set routes
+      addRoutes.value = filterRoutes
+      routes.value = constantRoutes.concat(routes.value)
 
-      commit('SET_ROUTES', filterRoutes)
       // 记录可访问的url到store，用于做button级的权限控制
-      commit('SET_ACCESS_URLS', accessUrls)
+      accessUrls.value = aUrls
       resolve(filterRoutes)
     })
   }
-}
 
-export default {
-  namespaced: true,
-  state,
-  mutations,
-  actions
-}
+  return {
+    routes,
+    addRoutes,
+    accessUrls,
+    generateRoutes,
+  }
+})
+
