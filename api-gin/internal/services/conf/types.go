@@ -1,6 +1,6 @@
 package conf
 
-type CommonConf struct {
+type AppConf struct {
 	App  string `json:"app"`
 	Host string `json:"host"`
 	Port int    `json:"port"`

@@ -1,35 +1,48 @@
 package models
 
-import "fmt"
+import (
+	"time"
+)
 
-type UserRow struct {
-	Uid         int    `db:"uid"`
-	Name        string `db:"name"`
-	Password    string `db:"password"`
-	Salt        string `db:"salt"`
-	RealName    string `db:"real_name"`
-	Mobile      string `db:"mobile"`
-	Email       string `db:"email"`
-	Desc        string `db:"desc"`
-	LoginTime   int    `db:"login_time"`
-	PwdWrong    int    `db:"pwd_wrong"`
-	Status      int    `db:"status"`
-	CreatedTime string `db:"created_time"`
-	UpdatedTime string `db:"updated_time"`
+type User struct {
+	Id          int       `gorm:"primaryKey,column:id" json:"id"`
+	Name        string    `gorm:"column:name,uniqueIndex:uni_name" json:"name"`
+	Password    string    `gorm:"column:password" json:"password"`
+	Salt        string    `gorm:"column:salt" json:"salt"`
+	RealName    string    `gorm:"column:real_name" json:"real_name"`
+	Mobile      string    `gorm:"column:mobile" json:"mobile"`
+	Email       string    `gorm:"column:email" json:"email"`
+	Desc        string    `gorm:"column:desc" json:"desc"`
+	LoginTime   int       `gorm:"column:login_time" json:"login_time"`
+	PwdWrong    uint8     `gorm:"column:pwd_wrong" json:"pwd_wrong"`
+	Status      uint8     `gorm:"column:status" json:"status"`
+	CreatedTime time.Time `gorm:"column:created_time" json:"created_time"`
+	UpdatedTime time.Time `gorm:"column:updated_time" json:"updated_time"`
 }
 
-type UserModel struct {
-	Conn  string
-	Table string
+func (*User) TableName() string {
+	return "user"
 }
 
-var UserMdl = &UserModel{"default", "user"}
+type userMdl struct {
+	baseMdl
+	StatusMap map[string]int
+}
 
-func (m *UserModel) GetUserByName(name string) (u UserRow) {
-	sqlStr := fmt.Sprintf("select * from %s where name = ? limit 1", m.Table)
-	err := GetConnect("default").Get(&u, sqlStr, name)
-	if err != nil {
-		fmt.Printf("GetUserByName error: %v", err)
+var UserMdl *userMdl
+
+func init() {
+	UserMdl = &userMdl{}
+	UserMdl.dbName = "default"
+	UserMdl.StatusMap = map[string]int{
+		"valid":   1,
+		"invalid": 0,
 	}
+}
+
+// Get user by name
+func (m *userMdl) GetValidUserByName(name string) (u *User) {
+	db := m.getDb()
+	db.First(&u, "name = ? and status = ?", name, m.StatusMap["valid"])
 	return u
 }

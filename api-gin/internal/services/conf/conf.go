@@ -10,7 +10,7 @@ import (
 )
 
 type ConfigVp struct {
-	CommonVp   *viper.Viper
+	AppVp      *viper.Viper
 	DbVp       *viper.Viper
 	JwtVp      *viper.Viper
 	SettingsVp *viper.Viper
@@ -18,7 +18,7 @@ type ConfigVp struct {
 
 var Env string
 var Conf *ConfigVp
-var Common *CommonConf
+var App *AppConf
 var Db map[string]*DbConf
 var Jwt *JwtConf
 var Settings *SettingsConf
@@ -30,12 +30,12 @@ func InitConf(path string, env string) {
 		Conf = &ConfigVp{}
 		Env = env
 		var err error
-		// common conf
-		Conf.CommonVp, err = NewConfVp(Env, "common")
+		// app conf
+		Conf.AppVp, err = NewConfVp(Env, "app")
 		if err != nil {
-			log.Fatalf("common conf vp init err: %v", err)
+			log.Fatalf("app conf vp init err: %v", err)
 		}
-		Conf.CommonVp.Unmarshal(&Common)
+		Conf.AppVp.Unmarshal(&App)
 
 		// db conf
 		Conf.DbVp, err = NewConfVp(Env, "db")

@@ -8,6 +8,6 @@
 ## develop
 
 ```shell
-    go get -u github.com/pilu/fresh
+    go install github.com/pilu/fresh
     fresh
 ```

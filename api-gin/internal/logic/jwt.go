@@ -1,18 +1,23 @@
 package logic
 
 import (
-	"api-gin/internal/services/conf"
+	"admin-api/internal/services/conf"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 )
+
+type jwtLogic struct{}
+
+var Jwt = &jwtLogic{}
 
 type JwtClaims struct {
 	Uid int `json:"uid"`
 	jwt.StandardClaims
 }
 
-func GenJwtToken(uid int) (string, error) {
+// Gen jwt token string
+func (j *jwtLogic) GenJwtToken(uid int) (string, error) {
 	now := time.Now().Unix()
 	exp := now + int64(conf.Jwt.Exp)
 	claims := &JwtClaims{
@@ -27,8 +32,9 @@ func GenJwtToken(uid int) (string, error) {
 	return token, err
 }
 
-func ParseJwtToken(token string) (*JwtClaims, error) {
-	tokenClaims, err := jwt.ParseWithClaims(token, &JwtClaims{}, func(token *jwt.Token) (interface{}, error) {
+// Parse token string
+func (j *jwtLogic) ParseJwtToken(token string) (*JwtClaims, error) {
+	tokenClaims, err := jwt.ParseWithClaims(token, &JwtClaims{}, func(token *jwt.Token) (any, error) {
 		return []byte(conf.Jwt.SecretKey), nil
 	})
 	if tokenClaims != nil {
@@ -39,6 +45,7 @@ func ParseJwtToken(token string) (*JwtClaims, error) {
 	return nil, err
 }
 
+// Get method of algorithms
 func getJwtAlgorithmsMethod(algorithms string) *jwt.SigningMethodHMAC {
 	var method *jwt.SigningMethodHMAC
 	switch algorithms {

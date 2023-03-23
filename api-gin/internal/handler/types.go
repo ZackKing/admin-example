@@ -3,16 +3,16 @@ package handler
 import "fmt"
 
 type Res struct {
-	Code int         `json:"code"`
-	Msg  string      `json:"msg"`
-	Data interface{} `json:"data"`
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
+	Data any    `json:"data,omitempty"`
 }
 
-var ErrorCodeMsg = map[int]string{
-	-1: "unkown",
-	0:  "ok",
-	1:  "Parameter error: %s",
-	2:  "Mysql error!",
+var CodeMsg = map[int]string{
+	-1:   "unkown",
+	0:    "ok",
+	1000: "Parameter error: %s",
+	2000: "Mysql error !",
 
 	// auth
 	10001: "JWT Token Not Found!",
@@ -26,10 +26,10 @@ var ErrorCodeMsg = map[int]string{
 	10009: "Account password retry too much ! set disabled !",
 }
 
-func GetErrorCodeMsg(code int, a ...interface{}) string {
-	msg, ok := ErrorCodeMsg[code]
+func GetCodeMsg(code int, a ...any) string {
+	msg, ok := CodeMsg[code]
 	if !ok {
-		return ""
+		return "unkown"
 	} else {
 		return fmt.Sprintf(msg, a...)
 	}

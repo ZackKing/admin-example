@@ -1,20 +1,21 @@
 package routers
 
 import (
-	"api-gin/internal/handler"
-	"api-gin/internal/middleware"
+	"admin-api/internal/handler"
+	"admin-api/internal/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
 func Init(r *gin.Engine) {
+	authHandler := &handler.Auth{}
+	r.POST("/api/login", authHandler.Login)
 
-	r.Static("/public", "./public")
+	api := r.Group("/api")
+	api.Use(middleware.Auth)
 
-	r.POST("/login", handler.Login)
-
-	userApi := r.Group("/user")
-	userApi.Use(middleware.Auth)
-	userApi.GET("/", handler.Self)
-
+	userApi := api.Group("/user")
+	userHandler := &handler.User{}
+	userApi.GET("/", userHandler.Self)
+	userApi.GET("/:id", userHandler.Info)
 }

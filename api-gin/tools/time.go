@@ -4,6 +4,6 @@ import "time"
 
 type TS struct{}
 
-func (t *TS) now() int64 {
+func (t *TS) Now() int64 {
 	return time.Now().Unix()
 }

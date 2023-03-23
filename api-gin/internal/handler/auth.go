@@ -1,11 +1,14 @@
 package handler
 
 import (
-	"api-gin/internal/logic"
-	"fmt"
+	"admin-api/internal/logic"
 
 	"github.com/gin-gonic/gin"
 )
+
+type Auth struct {
+	Base
+}
 
 type LoginReq struct {
 	Account  string `json:"account" binding:"required,min=5"`
@@ -16,24 +19,24 @@ type LoginRes struct {
 	Token string `json:"token"`
 }
 
-func Login(c *gin.Context) {
+func (h *Auth) Login(c *gin.Context) {
 	data := &LoginReq{}
-	if ok := getData(c, &data); !ok {
+	if ok := h.validData(c, &data); !ok {
 		return
 	}
-	token, e := logic.GenJwtToken(1)
-	if e != nil {
-		fmt.Printf("error: %v", e.Error())
-		errorRes(c, -1, "", nil)
+	token, err := logic.Auth.Login(data.Account, data.Password)
+	if err != nil {
+		h.parseLogicErr(c, err)
 		return
 	}
-	successRes(c, &LoginRes{token})
+	h.okRes(c, &LoginRes{token})
 }
 
-func Self(c *gin.Context) {
-	v, ok := c.Get("uid")
-	if !ok {
-		v = nil
+func (h *Auth) RenewToken(c *gin.Context) {
+	uid := c.GetInt("uid")
+	token, ok := logic.Jwt.GenJwtToken(uid)
+	if ok != nil {
+		h.errRes(c, -1, "", nil)
 	}
-	successRes(c, v)
+	h.okRes(c, &LoginRes{token})
 }

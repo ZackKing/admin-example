@@ -5,7 +5,7 @@
         "port": 3306,
         "db": "admin",
         "user": "root",
-        "password": "123456",
+        "password": "zack123",
         "charset": "utf8mb4",
         "maxConns": 10,
         "maxIdleConns": 1
