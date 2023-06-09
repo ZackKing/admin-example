@@ -29,27 +29,58 @@
   </div>
 </template>
 
-<script>
+<script setup>
+// import { mapState } from 'pinia'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+import { useAppStore } from '@/store/app'
+import { useUserStore } from '@/store/user'
+import { ref } from 'vue'
 
-export default {
-  components: {
-    Breadcrumb,
-    Hamburger
-  },
-  computed: {},
-  methods: {
-    toggleSideBar() {
-      this.$store.app.toggleSideBar()
-    },
-    logout() {
-      this.$store.user.resetToken().then(() => {
-        location.reload()
-      })
-    }
-  }
+const store = useAppStore()
+const userStore = useUserStore()
+
+const sidebar = ref(store.sidebar)
+const name = ref(userStore.name)
+// const avatar = ref(userStore.avatar)
+
+function toggleSideBar() {
+  store.toggleSideBar()
 }
+
+function logout() {
+  userStore.resetToken().then(() => {
+    location.reload()
+  })
+}
+
+// export default {
+//   components: {
+//     Breadcrumb,
+//     Hamburger
+//   },
+//   data() {
+//     return {
+//       sidebar: store.sidebar
+//     }
+//   },
+//   computed: {
+//     ...mapState(useAppStore, [
+//       'avatar',
+//       'name'
+//     ])
+//   },
+//   methods: {
+//     toggleSideBar() {
+//       this.$store.app.toggleSideBar()
+//     },
+//     logout() {
+//       this.$store.user.resetToken().then(() => {
+//         location.reload()
+//       })
+//     }
+//   }
+// }
 </script>
 
 <style lang="scss" scoped>

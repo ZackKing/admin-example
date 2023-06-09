@@ -29,7 +29,7 @@ export default defineConfig({
 
   define: {
     'process.env': {
-      BASE_API: '/'
+      BASE_API: '/index.php'
     }
   },
 

@@ -15,11 +15,7 @@
       <el-table-column prop="remark" label="Remark" />
       <el-table-column label="Status">
         <template #default="{row}">
-          <el-switch
-            :disabled="row.id === 1"
-            :value="row.status"
-            @click.enter="row.id !== 1 ? switchStatus(row) : ''"
-          />
+          <el-switch v-model="row.status" :disabled="row.id === 1" @click.enter="row.id !== 1 ? switchStatus(row) : ''" />
         </template>
       </el-table-column>
       <el-table-column prop="created_time" label="Created Time" />
@@ -29,11 +25,11 @@
           <el-button
             :disabled="row.id === 1"
             type="primary"
-            size="mini"
+            size="small"
             @click="handleUpdate(row)"
           >Edit</el-button>
-          <el-button type="primary" size="mini" @click="handleSetUser(row)">Set User</el-button>
-          <el-button :disabled="row.id === 1" type="primary" size="mini" @click="handleSetMenu(row)">Set Menu</el-button>
+          <el-button type="primary" size="small" @click="handleSetUser(row)">Set User</el-button>
+          <el-button :disabled="row.id === 1" type="primary" size="small" @click="handleSetMenu(row)">Set Menu</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -163,7 +159,7 @@ export default {
     }
   },
   computed: {
-    filterMids: function() {
+    filterMids: function () {
       return this.dialogTwo.temp.mids.filter(item => {
         return !this.dialogTwo.menuTreeParent.includes(item)
       })
@@ -224,9 +220,9 @@ export default {
       this.resetTemp()
       this.dialogOne.dialogStatus = 'create'
       this.dialogOne.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dialogOne'].clearValidate()
-      })
+      // this.$nextTick(() => {
+      //   this.$refs['dialogOne'].clearValidate()
+      // })
     },
     createData() {
       this.$refs['dialogOne'].validate(valid => {
@@ -248,9 +244,9 @@ export default {
       this.dialogOne.temp = Object.assign({}, row)
       this.dialogOne.dialogFormVisible = true
       this.dialogOne.dialogStatus = 'edit'
-      this.$nextTick(() => {
-        this.$refs['dialogOne'].clearValidate()
-      })
+      // this.$nextTick(() => {
+      //   this.$refs['dialogOne'].clearValidate()
+      // })
     },
     updateData() {
       this.$refs['dialogOne'].validate(valid => {

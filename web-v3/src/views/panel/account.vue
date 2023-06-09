@@ -40,15 +40,15 @@
       <el-table-column prop="group" label="Groups" :formatter="groupFormatter" />
       <el-table-column label="Status">
         <template #default="{row}">
-          <el-switch :value="row.status" @click.enter="switchStatus(row)" />
+          <el-switch v-model="row.status" @click.enter="switchStatus(row)" />
         </template>
       </el-table-column>
       <el-table-column prop="desc" label="Remark" />
       <el-table-column label="Actions" width="300px">
         <template #default="{row}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">Edit</el-button>
-          <el-button type="primary" size="mini" @click="handleSetGroup(row)">Set Group</el-button>
-          <el-button type="primary" size="mini" @click="deleteAccount(row)">Delete</el-button>
+          <el-button type="primary" size="small" @click="handleUpdate(row)">Edit</el-button>
+          <el-button type="primary" size="small" @click="handleSetGroup(row)">Set Group</el-button>
+          <el-button type="primary" size="small" @click="deleteAccount(row)">Delete</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -225,9 +225,9 @@ export default {
       this.resetTemp()
       this.dialogOne.dialogStatus = 'create'
       this.dialogOne.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dialogOne'].clearValidate()
-      })
+      // this.$nextTick(() => {
+      //   this.$refs['dialogOne'].clearValidate()
+      // })
     },
     createData() {
       this.$refs['dialogOne'].validate((valid) => {
@@ -249,9 +249,9 @@ export default {
       this.dialogOne.temp = Object.assign({}, row)
       this.dialogOne.dialogFormVisible = true
       this.dialogOne.dialogStatus = 'edit'
-      this.$nextTick(() => {
-        this.$refs['dialogOne'].clearValidate()
-      })
+      // this.$nextTick(() => {
+      //   this.$refs['dialogOne'].clearValidate()
+      // })
     },
     updateData() {
       this.$refs['dialogOne'].validate((valid) => {

@@ -21,8 +21,8 @@ export const useUserStore = defineStore('user', () => {
 
   function login(userInfo) {
     return new Promise((resolve, reject) => {
-      userLogin({ ...userInfo }).then(response => {
-        const { data } = response
+      userLogin({ ...userInfo }).then(res => {
+        const { data } = res
         token.value = data.token
         setToken(data.token)
         resolve()
@@ -34,8 +34,8 @@ export const useUserStore = defineStore('user', () => {
 
   function getInfo() {
     return new Promise((resolve, reject) => {
-      userGetInfo().then(response => {
-        const { data } = response
+      userGetInfo().then(res => {
+        const { data } = res
         if (!data) {
           reject('Verification failed, please Login again.')
         }

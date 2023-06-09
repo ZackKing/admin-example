@@ -5,12 +5,14 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { useUserStore } from '@/store/user'
+import { ref } from 'vue'
 
-export default {
-  name: 'DashboardPage',
-  computed: {}
-}
+const name = ref('')
+const store = useUserStore()
+name.value = store.name
+
 </script>
 
 <style lang="scss" scoped>

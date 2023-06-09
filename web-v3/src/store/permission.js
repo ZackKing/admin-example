@@ -71,7 +71,7 @@ export const usePermissionStore = defineStore('permission', () => {
 
       // set routes
       addRoutes.value = filterRoutes
-      routes.value = constantRoutes.concat(routes.value)
+      routes.value = constantRoutes.concat(filterRoutes)
 
       // 记录可访问的url到store，用于做button级的权限控制
       accessUrls.value = aUrls

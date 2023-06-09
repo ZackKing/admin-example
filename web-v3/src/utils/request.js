@@ -24,7 +24,7 @@ service.interceptors.request.use(
     return config
   },
   error => {
-    console.log(error) // for debug
+    console.error(error) // for debug
     return Promise.reject(error)
   }
 )
@@ -81,7 +81,7 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log('err' + error) // for debug
+    console.error('err' + error) // for debug
     ElMessage({
       message: error.message,
       type: 'error',

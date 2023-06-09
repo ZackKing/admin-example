@@ -25,7 +25,7 @@
       <el-table-column prop="updated_time" label="updated_time" width="150" />
       <el-table-column label="Actions" width="150">
         <template #default="{row}">
-          <el-button type="primary" size="mini" @click="handleSetGroup(row)">
+          <el-button type="primary" size="small" @click="handleSetGroup(row)">
             Set Group
           </el-button>
         </template>

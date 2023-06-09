@@ -103,7 +103,8 @@ export const asyncRoutes = [
       }
     ]
   }, {
-    path: '*',
+    // path: '*',
+    path: '/:catchAll(.*)',
     name: '/404',
     redirect: '/404',
     hidden: true

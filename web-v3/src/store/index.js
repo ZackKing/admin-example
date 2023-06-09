@@ -13,7 +13,7 @@ export default {
       settings: useSettingStore(),
       permission: usePermissionStore(),
       user: useUserStore(),
-      tagsVies: useTagsViewStore(),
+      tagsView: useTagsViewStore(),
     }
   }
 }
