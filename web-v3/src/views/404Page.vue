@@ -9,11 +9,20 @@
           Please check that the URL you entered is correct, or click the button
           below to return to the homepage.
         </div>
-        <el-button type="primary" icon="el-icon-s-home" @click="$router.push('/')">Home</el-button>
+        <el-button type="primary" :icon="HomeFilledIcon" @click="goHome">Home</el-button>
       </div>
     </div>
   </div>
 </template>
+
+<script setup>
+import { HomeFilled as HomeFilledIcon } from '@element-plus/icons-vue'
+import { useRouter } from 'vue-router'
+const router = useRouter()
+function goHome() {
+  router.push({ path: '/' })
+}
+</script>
 
 <style lang="scss" scoped>
 .notfound-detail {

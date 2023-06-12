@@ -3,7 +3,7 @@
     <div class="filter-container">
       <el-form :inline="true" :model="filter">
         <el-form-item>
-          <el-button class="filter-item" :disabled="listLoading" type="primary" icon="el-icon-plus" @click="handleCreate">Add</el-button>
+          <el-button class="filter-item" :disabled="listLoading" type="primary" :icon="PlusIcon" @click="handleCreate">Add</el-button>
           <el-button class="filter-item" :disabled="listLoading" type="primary" @click="handleFilter">Refresh</el-button>
         </el-form-item>
       </el-form>
@@ -15,36 +15,22 @@
       <el-table-column prop="remark" label="Remark" />
       <el-table-column label="Status">
         <template #default="{row}">
-          <el-switch v-model="row.status" :disabled="row.id === 1" @click.enter="row.id !== 1 ? switchStatus(row) : ''" />
+          <el-switch v-model="row.status" :disabled="row.id === 1" @click="switchStatus(row)" />
         </template>
       </el-table-column>
       <el-table-column prop="created_time" label="Created Time" />
       <el-table-column prop="updated_time" label="Updated Time" />
       <el-table-column label="Actions" width="300">
         <template #default="{row}">
-          <el-button
-            :disabled="row.id === 1"
-            type="primary"
-            size="small"
-            @click="handleUpdate(row)"
-          >Edit</el-button>
-          <el-button type="primary" size="small" @click="handleSetUser(row)">Set User</el-button>
-          <el-button :disabled="row.id === 1" type="primary" size="small" @click="handleSetMenu(row)">Set Menu</el-button>
+          <el-button :disabled="row.id === 1" type="primary" @click="handleUpdate(row)">Edit</el-button>
+          <el-button type="primary" @click="handleSetUser(row)">Set User</el-button>
+          <el-button :disabled="row.id === 1" type="primary" @click="handleSetMenu(row)">Set Menu</el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <el-dialog
-      v-model:visible="dialogOne.dialogFormVisible"
-      :title="dialogOne.dialogStatus === 'create' ? 'Create' : 'Edit'"
-    >
-      <el-form
-        ref="dialogOne"
-        :rules="dialogOne.rules"
-        :model="dialogOne.temp"
-        label-position="left"
-        label-width="100px"
-      >
+    <el-dialog v-model="dialogOne.dialogFormVisible" :title="dialogOne.dialogStatus === 'create' ? 'Create' : 'Edit'">
+      <el-form ref="dialogOne" :rules="dialogOne.rules" :model="dialogOne.temp" label-position="left" label-width="100px">
         <el-form-item label="Name" prop="name">
           <el-input v-model="dialogOne.temp.name" />
         </el-form-item>
@@ -68,12 +54,8 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model:visible="dialogTwo.dialogFormVisible" title="Edit">
-      <el-form
-        ref="dialogTwo"
-        label-position="left"
-        label-width="100px"
-      >
+    <el-dialog v-model="dialogTwo.dialogFormVisible" title="Edit">
+      <el-form ref="dialogTwo" label-position="left" label-width="100px">
         <el-form-item v-if="dialogTwo.dialogStatus==='setMenu' && dialogTwo.dialogFormVisible" label="menuTree">
           <el-tree
             ref="menutree"
@@ -102,6 +84,10 @@
     </el-dialog>
   </div>
 </template>
+
+<script setup>
+import { Plus as PlusIcon } from '@element-plus/icons-vue'
+</script>
 
 <script>
 import {
@@ -197,7 +183,6 @@ export default {
           item.status = !!item.status
           return item
         })
-
         this.listLoading = false
       })
     },
@@ -275,15 +260,10 @@ export default {
         cancelButtonText: 'Cancel',
         type: 'warning'
       }).then(() => {
-        updateGroup({ status: row.status ? 0 : 1, id: row.id }).then(() => {
+        updateGroup({ status: row.status == 0 ? 0 : 1, id: row.id }).then(() => {
           this.dialogOne.dialogFormVisible = false
-          this.$notify({
-            title: 'Success',
-            message: 'Update Successfully',
-            type: 'success',
-            duration: 2000
-          })
-          row.status = !row.status
+          this.$notify({ title: 'Success', message: 'Update Successfully', type: 'success', duration: 2000 })
+          this.getList()
         })
       })
     },

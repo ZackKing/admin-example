@@ -1,8 +1,4 @@
 /**
- * Created by PanJiaChen on 16/11/18.
- */
-
-/**
  * Parse the time to string
  * @param {(Object|string|number)} time
  * @param {string} cFormat
@@ -252,7 +248,7 @@ export function getTime(type) {
 export function debounce(func, wait, immediate) {
   let timeout, args, context, timestamp, result
 
-  const later = function() {
+  const later = function () {
     // 据上一次触发时间间隔
     const last = +new Date() - timestamp
 
@@ -269,7 +265,7 @@ export function debounce(func, wait, immediate) {
     }
   }
 
-  return function(...args) {
+  return function (...args) {
     context = this
     timestamp = +new Date()
     const callNow = immediate && !timeout
@@ -380,4 +376,12 @@ export function regularMatch(str, obj) {
   })
 
   return key !== undefined ? obj[key] : undefined
+}
+
+/**
+ * @param {string} path
+ * @returns {Boolean}
+ */
+export function isExternal(path) {
+  return /^(https?:|mailto:|tel:)/.test(path)
 }

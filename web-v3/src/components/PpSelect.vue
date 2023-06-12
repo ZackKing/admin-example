@@ -41,9 +41,9 @@ export default {
     }
   },
   computed: {
-    formatList: function() {
+    formatList: function () {
       const _this = this
-      return this.list.map(function(item) {
+      return this.list.map(function (item) {
         if (typeof item !== 'object') {
           return {
             value: item,

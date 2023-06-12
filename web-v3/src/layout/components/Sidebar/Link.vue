@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { isExternal } from '@/utils/validate'
+import { isExternal } from '@/utils'
 
 export default {
   props: {
@@ -28,9 +28,9 @@ export default {
   },
   methods: {
     isExt(to) {
-      const f = isExternal(to)
-      this.is = f ? 'a' : 'router-link'
-      return f
+      const is = isExternal(to)
+      this.is = is ? 'a' : 'router-link'
+      return is
     }
     // linkProps(url) {
     //   if (isExternal(url)) {

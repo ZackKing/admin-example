@@ -7,7 +7,7 @@ if [ ! -d './dist' ]; then
 fi
 
 if [ ! -d './node_modules' ]; then
-    npm install
+    yarn install
 fi
 
-yarn dev
+yarn build

@@ -27,7 +27,7 @@ import Layout from '@/layout'
  * a base page that does not have permission requirements
  * all roles can be accessed
  */
-export const constantRoutes = [
+const constantRoutes = [
   {
     path: '/redirect',
     component: Layout,
@@ -69,7 +69,7 @@ export const constantRoutes = [
  * asyncRoutes
  * the routes that need to be dynamically loaded based on user roles
  */
-export const asyncRoutes = [
+const asyncRoutes = [
   {
     path: '/home',
     name: '/home',
@@ -86,21 +86,9 @@ export const asyncRoutes = [
     name: '/panel',
     alwaysShow: true,
     children: [
-      {
-        path: 'users',
-        name: '/panel/users',
-        component: () => import('@/views/panel/account.vue')
-      },
-      {
-        path: 'groups',
-        name: '/panel/groups',
-        component: () => import('@/views/panel/group.vue')
-      },
-      {
-        path: 'menus',
-        name: '/panel/menus',
-        component: () => import('@/views/panel/menu.vue')
-      }
+      { path: 'users', name: '/panel/users', component: () => import('@/views/panel/account.vue') },
+      { path: 'groups', name: '/panel/groups', component: () => import('@/views/panel/group.vue') },
+      { path: 'menus', name: '/panel/menus', component: () => import('@/views/panel/menu.vue') }
     ]
   }, {
     // path: '*',
@@ -122,4 +110,5 @@ export function resetRouter() {
   router.matcher = newRouter.matcher
 }
 
+export { constantRoutes, asyncRoutes }
 export default router

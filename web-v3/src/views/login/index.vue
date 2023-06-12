@@ -43,11 +43,6 @@
 
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.enter.prevent="handleLogin">Login</el-button>
 
-      <div class="tips">
-        <span style="margin-right:20px;">account: admin</span>
-        <span> password: admin1234</span>
-      </div>
-
     </el-form>
   </div>
 </template>

@@ -3,30 +3,13 @@
     <div class="filter-container">
       <el-form :inline="true" :model="filter">
         <el-form-item label="Account:">
-          <el-input
-            v-model.trim="filter.name"
-            clearable
-            placeholder="Account"
-            @keyup.enter="handleFilter"
-          />
+          <el-input v-model.trim="filter.name" clearable placeholder="Account" />
         </el-form-item>
         <el-form-item>
-          <el-button
-            class="filter-item"
-            :disabled="listLoading"
-            type="primary"
-            icon="el-icon-search"
-            @click="handleFilter"
-          >Search</el-button>
+          <el-button class="filter-item" :disabled="listLoading" type="primary" :icon="SearchIcon" @click="handleFilter">Search</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button
-            class="filter-item"
-            :disabled="listLoading"
-            type="primary"
-            icon="el-icon-plus"
-            @click="handleCreate"
-          >Add</el-button>
+          <el-button class="filter-item" :disabled="listLoading" type="primary" :icon="PlusIcon" @click="handleCreate">Add</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -46,32 +29,33 @@
       <el-table-column prop="desc" label="Remark" />
       <el-table-column label="Actions" width="300px">
         <template #default="{row}">
-          <el-button type="primary" size="small" @click="handleUpdate(row)">Edit</el-button>
-          <el-button type="primary" size="small" @click="handleSetGroup(row)">Set Group</el-button>
-          <el-button type="primary" size="small" @click="deleteAccount(row)">Delete</el-button>
+          <el-button type="primary" @click="handleUpdate(row)">Edit</el-button>
+          <el-button type="primary" @click="handleSetGroup(row)">Set Group</el-button>
+          <el-button type="primary" @click="deleteAccount(row)">Delete</el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <pagination v-model:page="filter.page" v-model:limit="filter.size" :total="total" @pagination="getList" />
+    <el-pagination
+      v-model:current-page="filter.page"
+      v-model:page-size="filter.size"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="total"
+      @size-change="getList"
+      @current-change="getList"
+    />
 
-    <el-dialog v-model:visible="dialogOne.dialogFormVisible" :title="dialogOne.dialogStatus === 'create' ? 'Create' : 'Edit'">
+    <el-dialog v-model="dialogOne.dialogFormVisible" :title="dialogOne.dialogStatus === 'create' ? 'Create' : 'Edit'">
       <el-form ref="dialogOne" :rules="dialogOne.rules" :model="dialogOne.temp" label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
         <el-form-item label="Account" prop="name">
           <el-input v-model="dialogOne.temp.name" />
         </el-form-item>
-        <!-- <el-form-item label="Real Name" prop="real_name">
-          <el-input v-model="dialogOne.temp.real_name" />
-        </el-form-item> -->
         <el-form-item v-if="dialogOne.dialogStatus==='create'" label="Password" prop="password">
           <el-input v-model="dialogOne.temp.password" />
         </el-form-item>
         <el-form-item v-else label="Password">
           <el-button type="primary" @click="resetPwd(dialogOne.temp)">Reset Password</el-button>
         </el-form-item>
-        <!-- <el-form-item label="Mobile" prop="mobile">
-          <el-input v-model="dialogOne.temp.mobile" />
-        </el-form-item> -->
         <el-form-item label="Department" prop="department">
           <el-select v-model="dialogOne.temp.department" placeholder="select department">
             <el-option v-for="item in options.department" :key="item.value" :label="item.value" :value="item.value" />
@@ -86,17 +70,13 @@
       </el-form>
       <template #footer>
         <div>
-          <el-button @click="dialogOne.dialogFormVisible = false">
-            Cancel
-          </el-button>
-          <el-button type="primary" @click="dialogOne.dialogStatus==='create' ? createData() : updateData()">
-            Confirm
-          </el-button>
+          <el-button @click="dialogOne.dialogFormVisible = false">Cancel</el-button>
+          <el-button type="primary" @click="dialogOne.dialogStatus==='create' ? createData() : updateData()">Confirm</el-button>
         </div>
       </template>
     </el-dialog>
 
-    <el-dialog v-model:visible="dialogTwo.dialogFormVisible" title="Edit">
+    <el-dialog v-model="dialogTwo.dialogFormVisible" title="Edit">
       <el-form ref="dialogTwo" label-position="left" label-width="150px">
         <el-form-item v-show="dialogTwo.dialogStatus==='setGroup'" label="Group List">
           <el-checkbox-group v-model="dialogTwo.temp.group">
@@ -111,20 +91,22 @@
         </div>
       </template>
     </el-dialog>
+
   </div>
 </template>
+
+<script setup>
+import { Search as SearchIcon, Plus as PlusIcon } from '@element-plus/icons-vue'
+</script>
 
 <script>
 import { getAccountList, addAccount, updateAccount, setStatus, setGroup } from '@/api/account'
 import { getGroupList } from '@/api/group'
-import Pagination from '@/components/Pagination'
 import _ from 'lodash'
 
 export default {
   name: 'AccountManage',
-  components: {
-    Pagination
-  },
+  components: {},
   data() {
     return {
       list: null,
@@ -168,13 +150,6 @@ export default {
       },
       options: {
         department: [
-          { value: 'R&D / PM' },
-          { value: 'R&D / Client' },
-          { value: 'R&D / Server' },
-          { value: 'R&D / Design' },
-          { value: 'R&D / QA' },
-          { value: 'Marketing / CS' },
-          { value: 'Marketing / Sales' },
           { value: 'Admin' },
           { value: 'Others' },
         ]

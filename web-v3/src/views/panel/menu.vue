@@ -25,20 +25,13 @@
       <el-table-column prop="updated_time" label="updated_time" width="150" />
       <el-table-column label="Actions" width="150">
         <template #default="{row}">
-          <el-button type="primary" size="small" @click="handleSetGroup(row)">
-            Set Group
-          </el-button>
+          <el-button type="primary" @click="handleSetGroup(row)">Set Group</el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <el-dialog v-model:visible="dialogTwo.dialogFormVisible" title="Edit">
-      <el-form
-        ref="dialogTwo"
-        label-position="left"
-        label-width="100px"
-        style="width: 640px; margin-left:50px;"
-      >
+    <el-dialog v-model="dialogTwo.dialogFormVisible" title="Edit">
+      <el-form ref="dialogTwo" label-position="left" label-width="100px" style="width: 640px; margin-left:50px;">
         <el-form-item v-show="dialogTwo.dialogStatus==='setGroup'" label="groupList">
           <el-checkbox-group v-model="dialogTwo.temp.group_ids">
             <el-checkbox v-for="item in dialogTwo.groupList" :key="item.id" style="min-width: 160px" :label="item.id">{{ item.name }}</el-checkbox>
@@ -57,9 +50,7 @@
 
 <script>
 import { getMenuList, getMenuInfo, setGroup } from '@/api/menu'
-import {
-  getGroupList
-} from '@/api/group'
+import { getGroupList } from '@/api/group'
 
 export default {
   name: 'MenuManage',
