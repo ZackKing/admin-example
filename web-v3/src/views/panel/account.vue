@@ -23,7 +23,7 @@
       <el-table-column prop="group" label="Groups" :formatter="groupFormatter" />
       <el-table-column label="Status">
         <template #default="{row}">
-          <el-switch v-model="row.status" @click.enter="switchStatus(row)" />
+          <el-switch v-model="row.status" @click="switchStatus(row)" />
         </template>
       </el-table-column>
       <el-table-column prop="desc" label="Remark" />
@@ -56,10 +56,11 @@
         <el-form-item v-else label="Password">
           <el-button type="primary" @click="resetPwd(dialogOne.temp)">Reset Password</el-button>
         </el-form-item>
-        <el-form-item label="Department" prop="department">
-          <el-select v-model="dialogOne.temp.department" placeholder="select department">
-            <el-option v-for="item in options.department" :key="item.value" :label="item.value" :value="item.value" />
-          </el-select>
+        <el-form-item label="RealName" prop="real_name">
+          <el-input v-model="dialogOne.temp.real_name" />
+        </el-form-item>
+        <el-form-item label="Mobile" prop="mobile">
+          <el-input v-model="dialogOne.temp.mobile" />
         </el-form-item>
         <el-form-item label="Email" prop="email">
           <el-input v-model="dialogOne.temp.email" />
@@ -102,7 +103,8 @@ import { Search as SearchIcon, Plus as PlusIcon } from '@element-plus/icons-vue'
 <script>
 import { getAccountList, addAccount, updateAccount, setStatus, setGroup } from '@/api/account'
 import { getGroupList } from '@/api/group'
-import _ from 'lodash'
+import { random } from 'lodash-es'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 export default {
   name: 'AccountManage',
@@ -121,9 +123,8 @@ export default {
         temp: {
           uid: undefined,
           name: '',
-          department: '',
-          // real_name: '',
-          // mobile: '',
+          real_name: '',
+          mobile: '',
           email: '',
           password: '',
           desc: ''
@@ -132,11 +133,10 @@ export default {
         dialogStatus: '',
         rules: {
           name: [{ required: true, min: 6, max: 32, message: 'account must be 6 to 32 digits', trigger: 'change' }],
-          // real_name: [{ required: true, message: 'real name is required', trigger: 'change' }],
+          real_name: [{ required: true, message: 'real name is required', trigger: 'change' }],
           password: [{ required: true, min: 6, message: 'password must be greater than or equal to 6 digits', trigger: 'change' }],
-          // mobile: [{ required: true, message: 'mobile is required', trigger: 'change' }],
+          mobile: [{ required: true, message: 'mobile is required', trigger: 'change' }],
           email: [{ required: true, message: 'email is required', trigger: 'change' }],
-          department: [{ required: true, message: 'Department is required', trigger: 'change' }],
         }
       },
       dialogTwo: {
@@ -210,7 +210,7 @@ export default {
           addAccount(this.dialogOne.temp).then(() => {
             this.handleFilter()
             this.dialogOne.dialogFormVisible = false
-            this.$notify({
+            ElMessage({
               title: 'Success',
               message: 'Created Successfully',
               type: 'success',
@@ -237,7 +237,7 @@ export default {
             const index = this.list.findIndex(v => v.id === this.dialogOne.temp.id)
             this.list.splice(index, 1, this.dialogOne.temp)
             this.dialogOne.dialogFormVisible = false
-            this.$notify({
+            ElMessage({
               title: 'Success',
               message: 'Update Successfully',
               type: 'success',
@@ -248,44 +248,49 @@ export default {
       })
     },
     switchStatus(row) {
-      this.$confirm('Please confirm the operation?', 'Tips', {
+      ElMessageBox.confirm('Please confirm the operation?', 'Warning', {
         confirmButtonText: 'Confirm',
         cancelButtonText: 'Cancel',
         type: 'warning'
       }).then(() => {
-        setStatus({ status: row.status ? 0 : 1, uid: row.uid }).then(() => {
+        setStatus({ status: !row.status ? 0 : 1, uid: row.uid }).then(() => {
           this.dialogOne.dialogFormVisible = false
-          this.$notify({
+          ElMessage({
             title: 'Success',
             message: 'Update Successfully',
             type: 'success',
             duration: 2000
           })
-          row.status = !row.status
         })
+      }).catch(err => {
+        console.error(err)
+        row.status = !row.status
       })
     },
     deleteAccount(row) {
-      this.$confirm('Delete this account. Are you sure?', 'Tips', {
-        confirmButtonText: 'Confirm',
-        cancelButtonText: 'Cancel',
-        type: 'warning'
-      }).then(() => {
+      ElMessageBox.confirm(
+        'Delete this account. Are you sure?',
+        'Warning',
+        {
+          confirmButtonText: 'Confirm',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
         setStatus({ status: 2, uid: row.uid }).then(() => {
-          this.$notify({ title: 'Success', message: 'Update Successfully', type: 'success' })
+          ElMessage({ title: 'Success', message: 'Update Successfully', type: 'success' })
           this.getList()
         })
       })
     },
     resetPwd(row) {
-      this.$confirm('Reset this user\'s password. Are you sure?', 'Tips', {
+      ElMessageBox.confirm('Reset this user\'s password. Are you sure?', 'Warning', {
         confirmButtonText: 'Confirm',
         cancelButtonText: 'Cancel',
         type: 'warning'
       }).then(() => {
-        const password = `Admin${_.random(10000, 99999)}`
+        const password = `Admin${random(10000, 99999)}`
         updateAccount({ uid: row.uid, password }).then(rs => {
-          this.$confirm(`New password: ${password}`, 'Tips', {
+          ElMessageBox.confirm(`New password: ${password}`, 'Warning', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'warning'
@@ -309,7 +314,7 @@ export default {
         this.dialogTwo.dialogFormVisible = false
         const index = this.list.findIndex(v => v.uid === this.dialogTwo.temp.uid)
         this.list.splice(index, 1, { ...this.list[index], group: this.dialogTwo.temp.group })
-        this.$notify({
+        ElMessage({
           title: 'Success',
           message: 'Update Successfully',
           type: 'success',

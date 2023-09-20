@@ -68,13 +68,7 @@ service.interceptors.response.use(
       return Promise.reject(error)
     } else {
       if (res.code !== 0) {
-        ElMessage({
-          message: res.msg || 'Error',
-          type: 'error'
-        })
-        const error = new Error(res.msg || 'Error')
-        error.code = res.code
-        return Promise.reject(error)
+        return res
       } else {
         return res
       }

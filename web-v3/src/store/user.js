@@ -47,7 +47,7 @@ export const useUserStore = defineStore('user', () => {
         roles.value = data.roles
         uid.value = data.uid
         name.value = data.name
-        avatar.value = data.head_icon
+        avatar.value = data.avatar
         resolve(data)
       }).catch(error => {
         reject(error)

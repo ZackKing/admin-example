@@ -5,11 +5,11 @@
         v-for="tag in visitedViews"
         ref="tag"
         :key="tag.path"
-        :class="isActive(tag)?'active':''"
+        :class="isActive(tag) ? 'active' : ''"
         :to="{ path: tag.path, query: tag.query, fullPath: tag.fullPath }"
         class="tags-view-item"
-        @click.middle.enter="!isAffix(tag)?closeSelectedTag(tag):''"
-        @contextmenu.prevent.enter="openMenu(tag,$event)"
+        @click.middle.enter="!isAffix(tag) ? closeSelectedTag(tag) : ''"
+        @contextmenu.prevent.enter="openMenu(tag, $event)"
       >
         {{ tag.title }}
         <span v-if="!isAffix(tag)" class="el-icon-close" @click.prevent.stop="closeSelectedTag(tag)" />
@@ -26,7 +26,7 @@
 
 <script>
 import ScrollPane from './ScrollPane.vue'
-import path from 'path'
+import path from 'path-browserify'
 
 export default {
   components: { ScrollPane },
@@ -202,12 +202,14 @@ export default {
       position: relative;
       cursor: pointer;
       height: 26px;
+      min-width: 60px;
       line-height: 26px;
       border: 1px solid #d8dce5;
       color: #495060;
       background: #fff;
       padding: 0 8px;
       font-size: 12px;
+      text-align: center;
       margin-left: 5px;
       margin-top: 4px;
       &:first-of-type {
@@ -258,7 +260,6 @@ export default {
 </style>
 
 <style lang="scss">
-//reset element css of el-icon-close
 .tags-view-wrapper {
   .tags-view-item {
     .el-icon-close {

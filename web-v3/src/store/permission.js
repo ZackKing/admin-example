@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { asyncRoutes, constantRoutes } from '@/router'
 import { useCommonStore } from './common'
-import _ from 'lodash'
+import { sortBy } from 'lodash-es'
 
 /**
  * Filter asynchronous routing tables by recursion
@@ -47,7 +47,7 @@ export function filterAsyncRoutes(routes, apiRoutes, accessUrls) {
         if (item.children && item.children.length > 0) {
           item.children = filterValidRoute(item.children)
         }
-        item.children = _.sortBy(item.children, ['sort'])
+        item.children = sortBy(item.children, ['sort'])
         return true
       }
     })

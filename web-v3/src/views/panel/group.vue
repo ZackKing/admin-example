@@ -99,6 +99,7 @@ import {
 } from '@/api/group'
 import { getMenuList } from '@/api/menu'
 import { getAccountList } from '@/api/account'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 export default {
   name: 'GroupManage',
@@ -215,7 +216,7 @@ export default {
           addGroup(this.dialogOne.temp).then(() => {
             this.handleFilter()
             this.dialogOne.dialogFormVisible = false
-            this.$notify({
+            ElMessage({
               title: 'Success',
               message: 'Created Successfully',
               type: 'success',
@@ -244,7 +245,7 @@ export default {
             )
             this.list.splice(index, 1, this.dialogOne.temp)
             this.dialogOne.dialogFormVisible = false
-            this.$notify({
+            ElMessage({
               title: 'Success',
               message: 'Update Successfully',
               type: 'success',
@@ -255,14 +256,14 @@ export default {
       })
     },
     switchStatus(row) {
-      this.$confirm('Please confirm the operation?', 'Tips', {
+      ElMessageBox('Please confirm the operation?', 'Tips', {
         confirmButtonText: 'Confirm',
         cancelButtonText: 'Cancel',
         type: 'warning'
       }).then(() => {
         updateGroup({ status: row.status == 0 ? 0 : 1, id: row.id }).then(() => {
           this.dialogOne.dialogFormVisible = false
-          this.$notify({ title: 'Success', message: 'Update Successfully', type: 'success', duration: 2000 })
+          ElMessage({ title: 'Success', message: 'Update Successfully', type: 'success', duration: 2000 })
           this.getList()
         })
       })
@@ -285,7 +286,7 @@ export default {
         this.dialogTwo.dialogFormVisible = false
         const index = this.list.findIndex(v => v.id === this.dialogTwo.temp.id)
         this.list[index].uids = this.dialogTwo.temp.uids
-        this.$notify({
+        ElMessage({
           title: 'Success',
           message: 'Update Successfully',
           type: 'success',
@@ -302,7 +303,7 @@ export default {
         this.dialogTwo.dialogFormVisible = false
         const index = this.list.findIndex(v => v.id === this.dialogTwo.temp.id)
         this.list[index].mids = current
-        this.$notify({
+        ElMessage({
           title: 'Success',
           message: 'Update Successfully',
           type: 'success',

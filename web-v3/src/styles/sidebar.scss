@@ -185,6 +185,7 @@
   .nest-menu .el-sub-menu>.el-sub-menu__title,
   .el-menu-item {
     color: #fff;
+    background-color: #1d2835;
     &:hover {
       // you can use $subMenuHover
       background-color: $menuHover !important;

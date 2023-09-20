@@ -1,16 +1,16 @@
-import _ from 'lodash'
+import { isNil } from 'lodash-es'
 import dayjs from 'dayjs'
 
 export function numFormatter(row, col, cv, idx) {
   const num = +cv
-  if (_.isNil(num) || _.isNaN(num)) {
+  if (isNil(num) || isNaN(num)) {
     return 0
   }
   return num.toLocaleString()
 }
 
 export function timeFormatter(row, col, cv, idx) {
-  if (_.isNil(cv)) {
+  if (isNil(cv)) {
     return '0s'
   }
   let str = ''

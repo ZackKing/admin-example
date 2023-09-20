@@ -6,16 +6,18 @@
   "license": "MIT",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build:dev": "vite build --mode dev",
+    "build": "vite build --mode prod",
     "preview": "vite preview",
     "lint": "eslint --ext .js,.vue src"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^2.1.0",
     "axios": "^1.4.0",
     "dayjs": "^1.11.8",
     "element-plus": "^2.2.0",
     "js-cookie": "^3.0.5",
-    "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
     "nprogress": "^0.2.0",
     "path-browserify": "^1.0.1",
     "path-to-regexp": "^6.2.1",
@@ -28,6 +30,9 @@
     "eslint": "^8.42.0",
     "eslint-plugin-vue": "^9.14.1",
     "sass": "^1.63.2",
+    "unplugin-auto-import": "^0.16.4",
+    "unplugin-element-plus": "^0.7.1",
+    "unplugin-vue-components": "^0.25.1",
     "vite": "^4.3.9"
   },
   "engines": {

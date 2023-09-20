@@ -51,6 +51,7 @@
 <script>
 import { getMenuList, getMenuInfo, setGroup } from '@/api/menu'
 import { getGroupList } from '@/api/group'
+import { ElMessage } from 'element-plus'
 
 export default {
   name: 'MenuManage',
@@ -110,7 +111,7 @@ export default {
         group_ids: this.dialogTwo.temp.group_ids
       }).then(() => {
         this.dialogTwo.dialogFormVisible = false
-        this.$notify({
+        ElMessage({
           title: 'Success',
           message: 'Update Successfully',
           type: 'success',

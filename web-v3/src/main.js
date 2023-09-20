@@ -16,9 +16,9 @@ app.use(router)
 
 // element
 import ElementPlus from 'element-plus'
-import ElementPlusZhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import 'element-plus/dist/index.css'
-app.use(ElementPlus, { locale: ElementPlusZhCn, size: 'small' })
+import 'element-plus/theme-chalk/dark/css-vars.css'
+app.use(ElementPlus)
 
 // icon
 import svgIcon from '@/components/SvgIcon.vue'

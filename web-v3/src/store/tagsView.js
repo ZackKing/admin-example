@@ -91,7 +91,7 @@ export const useTagsViewStore = defineStore('tagsView', () => {
   }
   function delVisitedView(view) {
     _handleVisitedView(view, -1)
-    return [...visitedViews]
+    return [...visitedViews.value]
   }
 
   function addCachedView(view) {
@@ -99,7 +99,7 @@ export const useTagsViewStore = defineStore('tagsView', () => {
   }
   function delCachedView(view) {
     _handleCachedView(view, -1)
-    return [...cachedViews]
+    return [...cachedViews.value]
   }
 
   function addView(view) {

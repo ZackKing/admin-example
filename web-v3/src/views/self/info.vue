@@ -56,6 +56,7 @@
 
 <script>
 import { getInfo, editInfo, editPassword } from '@/api/user'
+import { ElMessage } from 'element-plus'
 
 export default {
   name: 'SelfInfo',
@@ -102,14 +103,14 @@ export default {
             email: this.info.email,
             desc: this.info.desc
           }).then(response => {
-            this.$notify({ title: 'Success', message: 'Update Successfully', type: 'success', duration: 2000 })
+            ElMessage({ title: 'Success', message: 'Update Successfully', type: 'success', duration: 2000 })
             this.refreshInfo()
           }).finally(() => {
             this.infoLock = false
           })
         } else {
           this.infoLock = false
-          this.$notify({ title: 'Error', message: 'Info Data Valid Error!', type: 'error', duration: 5000 })
+          ElMessage({ title: 'Error', message: 'Info Data Valid Error!', type: 'error', duration: 5000 })
         }
       })
     },
@@ -118,24 +119,24 @@ export default {
       this.$refs['pwdForm'].validate((valid) => {
         if (valid) {
           if (this.pwd.password !== this.pwd.retry_password) {
-            this.$notify({ title: 'Error', message: 'Retry password error', type: 'error', duration: 5000 })
+            ElMessage({ title: 'Error', message: 'Retry password error', type: 'error', duration: 5000 })
             this.pwdLock = false
             return
           }
           if (this.pwd.password === this.pwd.old_password) {
-            this.$notify({ title: 'Error', message: 'Password cannot be the same as the current password', type: 'error', duration: 5000 })
+            ElMessage({ title: 'Error', message: 'Password cannot be the same as the current password', type: 'error', duration: 5000 })
             this.pwdLock = false
             return
           }
           editPassword({ old_password: this.pwd.old_password, password: this.pwd.password }).then(response => {
-            this.$notify({ title: 'Success', message: 'Update Password Successfully', type: 'success' })
+            ElMessage({ title: 'Success', message: 'Update Password Successfully', type: 'success' })
             this.logout()
           }).finally(() => {
             this.pwdLock = false
           })
         } else {
           this.pwdLock = false
-          this.$notify({ title: 'Error', message: 'Password Data Valid Error!', type: 'error', duration: 5000 })
+          ElMessage({ title: 'Error', message: 'Password Data Valid Error!', type: 'error', duration: 5000 })
         }
       })
     },

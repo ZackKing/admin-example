@@ -2,6 +2,10 @@ import { defineConfig, loadEnv } from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
 import path from 'path'
 import { svgBuilder } from './src/plugins/svgBuilder'
+import AutoImport from 'unplugin-auto-import/vite'
+import Components from 'unplugin-vue-components/vite'
+import ElementPlus from 'unplugin-element-plus/vite'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 
 // config detail in https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -10,7 +14,14 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [
       vuePlugin(),
-      svgBuilder('./src/icons/svg/')
+      svgBuilder('./src/icons/svg/'),
+      ElementPlus({}),
+      AutoImport({
+        resolvers: [ElementPlusResolver()],
+      }),
+      Components({
+        resolvers: [ElementPlusResolver()],
+      }),
     ],
 
     resolve: {

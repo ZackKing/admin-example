@@ -79,7 +79,7 @@ const asyncRoutes = [
       path: 'index',
       name: '/home/index',
       component: () => import('@/views/dashboard/index')
-    }]
+    }],
   }, {
     path: '/panel',
     component: Layout,
@@ -88,14 +88,14 @@ const asyncRoutes = [
     children: [
       { path: 'users', name: '/panel/users', component: () => import('@/views/panel/account.vue') },
       { path: 'groups', name: '/panel/groups', component: () => import('@/views/panel/group.vue') },
-      { path: 'menus', name: '/panel/menus', component: () => import('@/views/panel/menu.vue') }
-    ]
+      { path: 'menus', name: '/panel/menus', component: () => import('@/views/panel/menu.vue') },
+    ],
   }, {
     // path: '*',
     path: '/:catchAll(.*)',
     name: '/404',
     redirect: '/404',
-    hidden: true
+    hidden: true,
   }
 ]
 

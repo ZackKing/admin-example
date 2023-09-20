@@ -7,17 +7,14 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <i class="el-icon-user-solid" />
           {{ name }}
-          <!-- <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar"> -->
+          <img :src="avatar" class="user-avatar">
           <i class="el-icon-caret-bottom" />
         </div>
         <template #dropdown>
           <el-dropdown-menu class="user-dropdown">
             <router-link to="/self/info">
-              <el-dropdown-item>
-                Info
-              </el-dropdown-item>
+              <el-dropdown-item>Info</el-dropdown-item>
             </router-link>
             <el-dropdown-item @click="logout">
               <span style="display:block;">Log Out</span>
@@ -42,7 +39,10 @@ const userStore = useUserStore()
 
 const sidebar = ref(store.sidebar)
 const name = ref(userStore.name)
-// const avatar = ref(userStore.avatar)
+const avatar = ref(userStore.avatar)
+if (!avatar.value) {
+  avatar.value = '/favicon.ico'
+}
 
 function toggleSideBar() {
   store.toggleSideBar()
@@ -53,34 +53,6 @@ function logout() {
     location.reload()
   })
 }
-
-// export default {
-//   components: {
-//     Breadcrumb,
-//     Hamburger
-//   },
-//   data() {
-//     return {
-//       sidebar: store.sidebar
-//     }
-//   },
-//   computed: {
-//     ...mapState(useAppStore, [
-//       'avatar',
-//       'name'
-//     ])
-//   },
-//   methods: {
-//     toggleSideBar() {
-//       this.$store.app.toggleSideBar()
-//     },
-//     logout() {
-//       this.$store.user.resetToken().then(() => {
-//         location.reload()
-//       })
-//     }
-//   }
-// }
 </script>
 
 <style lang="scss" scoped>
@@ -142,6 +114,7 @@ function logout() {
       .avatar-wrapper {
         // margin-top: 5px;
         position: relative;
+        line-height: 40px;
 
         .user-avatar {
           cursor: pointer;
@@ -156,6 +129,8 @@ function logout() {
           right: -20px;
           top: 20px;
           font-size: 12px;
+          width: 10px;
+          height: 10px;
         }
       }
     }
