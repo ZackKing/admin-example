@@ -10,7 +10,7 @@ class Component
      * Singleton
      * @return static
      */
-    public static function getInstance()
+    public static function instance()
     {
         $class = get_called_class();
         if (!isset(self::$_instances[$class])) {

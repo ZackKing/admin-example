@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Model;
+namespace App\Models;
 
 class Redis
 {
@@ -8,6 +8,7 @@ class Redis
     private static $_connections = [];
 
     const CONN_DEFAULT = 'default';
+    const CONN_CACHE = 'cache';
 
     private function __construct()
     {}
@@ -16,7 +17,7 @@ class Redis
      * Singleton Pattern
      * @return static
      */
-    public static function getInstance()
+    public static function instance()
     {
         $class = get_called_class();
         if (!isset(self::$_instances[$class])) {
@@ -30,13 +31,14 @@ class Redis
      * @param string $key
      * @return \Redis|null
      */
-    public function getConnection(string $key = 'default')
+    public function connect(string $key = 'default')
     {
         if (isset(self::$_connections[$key])) {
             return self::$_connections[$key];
         }
 
-        $config = config('redis');
+        $config = config('database.redis');
+
         if (!isset($config[$key])) {
             return null;
         }
@@ -44,7 +46,7 @@ class Redis
         try {
             $redis = new \Redis();
             $redis->connect($config[$key]['host'], $config[$key]['port']);
-            if (isset($config[$key]['password'])) {
+            if (!empty($config[$key]['password'])) {
                 $redis->auth($config[$key]['password']);
             }
             if (isset($config[$key]['db'])) {
@@ -61,29 +63,6 @@ class Redis
         }
 
         return self::$_connections[$key];
-    }
-
-    public function defaultCache(string $key, $data = null, int $ex = 3600)
-    {
-        return $this->cache(self::CONN_DEFAULT, $key, $data, $ex);
-    }
-
-    public function cache(string $conn, string $key, $data = null, int $ex = 3600)
-    {
-        if (!$key || !$conn) {
-            return false;
-        }
-        $r = $this->getConnection($conn);
-        if (is_null($r)) {
-            return false;
-        }
-
-        if (\is_null($data)) { // get
-            $data = $r->get($key);
-            return $data === false ? false : \json_decode($data, true);
-        } else { // set
-            return $r->setex($key, $ex, \json_encode($data));
-        }
     }
 
 }

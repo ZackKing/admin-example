@@ -32,4 +32,40 @@ class Validator extends Component
         }
         return [];
     }
+
+    /**
+     * Undocumented function
+     *
+     * @param array $data
+     * @param array $fields ['key' => [rule => '', default => null, ignore => [], json => false, settype => '', rename => '']]
+     * @return array
+     */
+    public static function valid(array $data, array $fields = []): array
+    {
+        $rules = [];
+        $safeData = [];
+        foreach ($fields as $k => $v) {
+            $rules[$k] = isset($v['rule']) ? $v['rule'] : '';
+        }
+        self::check($data, $rules);
+        foreach ($fields as $k => $v) {
+            if (isset($data[$k])) {
+                $val = $data[$k];
+                if (!empty($v['ignore']) && in_array($val, $v['ignore'])) {
+                    continue;
+                }
+                if (!empty($v['settype'])) {
+                    \settype($val, $v['settype']);
+                }
+                if ($v['json'] ?? false) {
+                    $val = \json_decode($val, true);
+                }
+                $kn = $v['rename'] ?? $k;
+                $safeData[$kn] = $val;
+            } else {
+                isset($v['default']) && $safeData[$k] = $v['default'];
+            }
+        }
+        return $safeData;
+    }
 }

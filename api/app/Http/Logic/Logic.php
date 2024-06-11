@@ -2,7 +2,7 @@
 
 namespace App\Http\Logic;
 
-use App\Components\HttpError;
+use App\Exceptions\LogicException;
 
 class Logic
 {
@@ -15,7 +15,7 @@ class Logic
      * Singleton Pattern
      * @return static
      */
-    public static function getInstance()
+    public static function instance()
     {
         $class = get_called_class();
         if (!isset(self::$_instances[$class])) {
@@ -24,8 +24,8 @@ class Logic
         return self::$_instances[$class];
     }
 
-    protected function throwHttpError(int $code = -1, string $msg = '', array $data = [], array $params = [])
+    protected function throw(int $code = -1, string $msg = '', array $data = [], array $params = [])
     {
-        throw new HttpError($code, $msg, $data, $params);
+        throw new LogicException($code, $msg, $data, $params);
     }
 }

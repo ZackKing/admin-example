@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Model;
+namespace App\Models;
 
 use App\Components\Helper;
 use Medoo\Medoo;
@@ -17,14 +17,14 @@ class Model
 
     protected function __construct()
     {
-        self::$_conf = config('database');
+        self::$_conf = config('database.db');
     }
 
     /**
      * Singleton Pattern
      * @return static
      */
-    public static function getInstance()
+    public static function instance()
     {
         $class = get_called_class();
         if (!isset(self::$_instances[$class])) {

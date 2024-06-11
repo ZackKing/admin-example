@@ -2,7 +2,6 @@
 
 namespace App\Exceptions;
 
-use App\Components\HttpError as HttpLogicError;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
@@ -25,7 +24,7 @@ class Handler extends ExceptionHandler
         ValidationException::class,
         NotFoundHttpException::class,
         MethodNotAllowedHttpException::class,
-        HttpLogicError::class,
+        LogicException::class,
     ];
 
     /**
@@ -38,7 +37,7 @@ class Handler extends ExceptionHandler
      *
      * @throws \Exception
      */
-    public function report(\Throwable$e)
+    public function report(\Throwable $e)
     {
         parent::report($e);
         if ($this->shouldReport($e)) {
@@ -55,30 +54,30 @@ class Handler extends ExceptionHandler
      *
      * @throws \Throwable
      */
-    public function render($request, \Throwable $th)
+    public function render($request, \Throwable $e)
     {
         $res = [
             'code' => -1,
             'msg' => 'server error',
         ];
         if (config('app.debug')) {
-            $res['msg'] = $th->getMessage();
-            $res['exception'] = get_class($th);
-            $res['trace'] = array_slice($th->getTrace(), 0, 5);
+            $res['msg'] = $e->getMessage();
+            $res['exception'] = get_class($e);
+            $res['trace'] = array_slice(explode('#', $e->getTraceAsString()), 1, 5);
         }
 
-        if ($th instanceof HttpLogicError) { // handle http logic error
-            $res['code'] = $th->getCode();
-            $res['msg'] = $th->getMessage();
-            $res['data'] = $th->getErrorData();
+        if ($e instanceof LogicException) { // handle http logic error
+            $res['code'] = $e->getCode();
+            $res['msg'] = $e->getMessage();
+            $res['data'] = $e->getData();
             return $this->_response()->json($res, 200);
-        } else if ($th instanceof NotFoundHttpException || $th instanceof MethodNotAllowedHttpException) { // handle 404
+        } else if ($e instanceof NotFoundHttpException || $e instanceof MethodNotAllowedHttpException) { // handle 404
             $res['code'] = 404;
             $res['msg'] = 'Api not found';
             return $this->_response()->json($res, 404);
-        } else if ($th instanceof ValidationException) { //handle data params error
+        } else if ($e instanceof ValidationException) { //handle data params error
             $res['code'] = 1;
-            $res['msg'] = $th->validator->errors()->all(':key => :message');
+            $res['msg'] = $e->validator->errors()->all(':key => :message');
             return $this->_response()->json($res, 200);
         }
         return $this->_response()->json($res, 200, [], 0);

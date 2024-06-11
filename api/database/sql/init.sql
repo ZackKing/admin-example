@@ -99,4 +99,6 @@ CREATE TABLE `user` (
 
 INSERT INTO `user` (`uid`, `name`, `password`, `salt`, `real_name`, `mobile`, `email`, `desc`, `login_time`, `pwd_wrong`, `status`)
 VALUES
-	(1, 'admin', '3a45ff59459512a21554bec8ea2e256b', '29e26F', '超管', '18888888888', 'admin@admin.com', '这是默认的超管账号', 1641440542, 0, 1);
+	(1, 'admin', '6bd26abb93950168b41fb41d75f69f86', 'hM9MUs', '超管', '18888888888', 'admin@admin.com', '这是默认的超管账号', 1641440542, 0, 1);
+
+# admin / 123456

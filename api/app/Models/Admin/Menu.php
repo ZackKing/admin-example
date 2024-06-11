@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Model;
+namespace App\Models\Admin;
+
+use App\Models\Model;
 
 use App\Components\Helper;
 

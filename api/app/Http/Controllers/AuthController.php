@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Components\Helper;
+use App\Components\JWTHelper;
 use App\Http\Logic\Auth as AuthLogic;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -36,12 +37,12 @@ class AuthController extends Controller
             'password' => ['rule' => 'required|string'],
         ]);
 
-        $authLogic = AuthLogic::getInstance();
+        $authLogic = AuthLogic::instance();
         $ip = Helper::realIp();
 
         $token = $authLogic->login($data['account'], $data['password']);
         $authLogic->loginOk($data['account'], $ip);
-        return $this->retSuccess([
+        return $this->ok([
             'token' => $token,
         ]);
     }
@@ -60,10 +61,10 @@ class AuthController extends Controller
      *      "msg": "success"
      *   }
      */
-    public function renewToken(Request $request): JsonResponse
+    public function renewToken(Request $r): JsonResponse
     {
-        return $this->retSuccess([
-            'token' => AuthLogic::getInstance()->createToken($request->jwt['uid']),
+        return $this->ok([
+            'token' => JWTHelper::createToken($this->getUid($r)),
         ]);
     }
 
@@ -90,8 +91,8 @@ class AuthController extends Controller
      */
     public function menu(Request $request): JsonResponse
     {
-        $menuTree = AuthLogic::getInstance()->getUserMenu($this->getUid($request));
-        return $this->retSuccess($menuTree);
+        $menuTree = AuthLogic::instance()->getUserMenu($this->getUid($request));
+        return $this->ok($menuTree);
     }
 
     /**
@@ -118,11 +119,11 @@ class AuthController extends Controller
             'old_password' => ['rule' => 'required|string'],
         ]);
         $uid = $this->getUid($request);
-        $res = AuthLogic::getInstance()->changePwd($uid, $data['password'], $data['old_password']);
+        $res = AuthLogic::instance()->changePwd($uid, $data['password'], $data['old_password']);
         if (!$res) {
-            $this->retError(10004);
+            $this->fail(10004);
         }
-        return $this->retSuccess();
+        return $this->ok();
     }
 
     /**
@@ -147,8 +148,8 @@ class AuthController extends Controller
             'id' => ['rule' => 'required|int|min:0'],
             'uids' => ['rule' => 'array', 'default' => []],
         ]);
-        AuthLogic::getInstance()->setGroupUser($data['id'], $data['uids']);
-        return $this->retSuccess(true);
+        AuthLogic::instance()->setGroupUser($data['id'], $data['uids']);
+        return $this->ok(true);
     }
 
     /**
@@ -173,8 +174,8 @@ class AuthController extends Controller
             'id' => ['rule' => 'required|int|min:0'],
             'menu_ids' => ['rule' => 'array', 'default' => []],
         ]);
-        AuthLogic::getInstance()->setGroupMenu($data['id'], $data['menu_ids']);
-        return $this->retSuccess(true);
+        AuthLogic::instance()->setGroupMenu($data['id'], $data['menu_ids']);
+        return $this->ok(true);
     }
 
     /**
@@ -199,8 +200,8 @@ class AuthController extends Controller
             'id' => ['rule' => 'required|int|min:0'],
             'group_ids' => ['rule' => 'array', 'default' => []],
         ]);
-        AuthLogic::getInstance()->setMenuGroup($data['id'], $data['group_ids']);
-        return $this->retSuccess(true);
+        AuthLogic::instance()->setMenuGroup($data['id'], $data['group_ids']);
+        return $this->ok(true);
     }
 
     /**
@@ -226,8 +227,8 @@ class AuthController extends Controller
      */
     public function menuTree(Request $request): JsonResponse
     {
-        $tree = AuthLogic::getInstance()->menuTree();
-        return $this->retSuccess($tree);
+        $tree = AuthLogic::instance()->menuTree();
+        return $this->ok($tree);
     }
 
     /**
@@ -252,11 +253,11 @@ class AuthController extends Controller
      */
     public function menuInfo(Request $request): JsonResponse
     {
-        $query = $this->getParam($request, [
+        $query = $this->getQuery($request, [
             'id' => ['rule' => 'required|int|min:0'],
         ]);
-        $info = AuthLogic::getInstance()->menuInfo($query['id']);
-        return $this->retSuccess($info);
+        $info = AuthLogic::instance()->menuInfo($query['id']);
+        return $this->ok($info);
     }
 
     /**
@@ -284,8 +285,8 @@ class AuthController extends Controller
      */
     public function groupList(Request $request): JsonResponse
     {
-        $list = AuthLogic::getInstance()->groupList();
-        return $this->retSuccess($list);
+        $list = AuthLogic::instance()->groupList();
+        return $this->ok($list);
     }
 
     /**
@@ -310,8 +311,8 @@ class AuthController extends Controller
             'name' => ['rule' => 'required|string|min:2'],
             'remark' => ['rule' => 'string', 'default' => ''],
         ]);
-        $id = AuthLogic::getInstance()->setGroup(0, $data);
-        return $this->retSuccess($id);
+        $id = AuthLogic::instance()->setGroup(0, $data);
+        return $this->ok($id);
     }
     /**
      * @api {post} /group/edit Group - edit
@@ -341,9 +342,9 @@ class AuthController extends Controller
         ]);
         $info = Helper::fieldFilter($data, ['name', 'remark', 'status']);
         if ($info) {
-            AuthLogic::getInstance()->setGroup($data['id'], $info);
+            AuthLogic::instance()->setGroup($data['id'], $info);
         }
-        return $this->retSuccess(true);
+        return $this->ok(true);
     }
 
 }

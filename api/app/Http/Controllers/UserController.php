@@ -38,13 +38,13 @@ class UserController extends Controller
      *    "msg": "success"
      *  }
      */
-    public function self(Request $request): JsonResponse
+    public function self(Request $r)
     {
-        $info = UserLogic::getInstance()->info($this->getUid($request));
+        $info = UserLogic::instance()->info($this->getUid($r));
         if (isset($info['password'])) {
             unset($info['password']);
         }
-        return $this->retSuccess($info);
+        return $this->ok($info);
     }
 
     /**
@@ -76,9 +76,9 @@ class UserController extends Controller
             'desc' => ['rule' => 'string'],
         ]);
         if ($data) {
-            UserLogic::getInstance()->edit($uid, $data);
+            UserLogic::instance()->edit($uid, $data);
         }
-        return $this->retSuccess();
+        return $this->ok();
     }
 
     /**
@@ -111,7 +111,7 @@ class UserController extends Controller
      *}
      */
     function list(Request $request): JsonResponse {
-        $query = $this->getParam($request, [
+        $query = $this->getQuery($request, [
             'name' => ['rule' => 'string', 'ignore' => ['']],
             'group_ids' => ['rule' => 'array'],
             'size' => ['rule' => 'int', 'default' => 10],
@@ -131,13 +131,13 @@ class UserController extends Controller
         !empty($query['name']) && $search['name'] = $query['name'];
         !empty($query['group_ids']) && $search['group_ids'] = $query['group_ids'];
 
-        $data = UserLogic::getInstance()->search($search, $option);
+        $data = UserLogic::instance()->search($search, $option);
         if ($data['list']) {
-            $data['list'] = UserLogic::getInstance()->addGroupInfo($data['list'], ['id', 'name', 'status']);
+            $data['list'] = UserLogic::instance()->addGroupInfo($data['list'], ['id', 'name', 'status']);
         }
         $data['size'] = $query['size'];
         $data['page'] = $query['page'];
-        return $this->retSuccess($data);
+        return $this->ok($data);
     }
 
     /**
@@ -161,16 +161,16 @@ class UserController extends Controller
      */
     public function info(Request $request): JsonResponse
     {
-        $query = $this->getParam($request, [
+        $query = $this->getQuery($request, [
             'uid' => ['rule' => 'required|int'],
         ]);
         $columns = ['uid', 'name', 'real_name', 'mobile', 'email', 'desc', 'status'];
-        $info = UserLogic::getInstance()->info($query['uid'], $columns);
+        $info = UserLogic::instance()->info($query['uid'], $columns);
         if ($info) {
-            $list = UserLogic::getInstance()->addGroupInfo([$info], ['id', 'name', 'status']);
+            $list = UserLogic::instance()->addGroupInfo([$info], ['id', 'name', 'status']);
             $info = $list[0];
         }
-        return $this->retSuccess($info);
+        return $this->ok($info);
     }
 
     /**
@@ -209,12 +209,12 @@ class UserController extends Controller
 
         $info = Helper::fieldFilter($data, ['name', 'real_name', 'mobile', 'email', 'desc', 'department']);
         if ($info) {
-            UserLogic::getInstance()->edit($data['uid'], $info);
+            UserLogic::instance()->edit($data['uid'], $info);
         }
         if (!empty($data['password'])) {
-            AuthLogic::getInstance()->setPwd($data['uid'], $data['password']);
+            AuthLogic::instance()->setPwd($data['uid'], $data['password']);
         }
-        return $this->retSuccess(true);
+        return $this->ok(true);
     }
 
     /**
@@ -241,8 +241,8 @@ class UserController extends Controller
             'status' => ['rule' => ['required', Rule::in([0, 1, 2])]],
         ]);
 
-        UserLogic::getInstance()->edit($data['uid'], ['status' => $data['status']]);
-        return $this->retSuccess(true);
+        UserLogic::instance()->edit($data['uid'], ['status' => $data['status']]);
+        return $this->ok(true);
     }
 
     /**
@@ -277,11 +277,11 @@ class UserController extends Controller
             'email' => ['rule' => 'required|string'],
             'desc' => ['rule' => 'string'],
         ]);
-        $uid = UserLogic::getInstance()->add($data);
+        $uid = UserLogic::instance()->add($data);
         if (!$uid) {
-            $this->retError(10006);
+            $this->fail(10006);
         }
-        return $this->retSuccess(['uid' => $uid]);
+        return $this->ok(['uid' => $uid]);
     }
 
     /**
@@ -306,8 +306,8 @@ class UserController extends Controller
             'id' => ['rule' => 'required|int|min:0'],
             'group_ids' => ['rule' => 'array', 'default' => []],
         ]);
-        AuthLogic::getInstance()->setUserGroup($data['id'], $data['group_ids']);
-        return $this->retSuccess(true);
+        AuthLogic::instance()->setUserGroup($data['id'], $data['group_ids']);
+        return $this->ok(true);
     }
 
 }

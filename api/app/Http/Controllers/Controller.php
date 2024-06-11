@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Components\HttpError;
 use App\Components\Validator;
+use App\Exceptions\LogicException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\Controller as BaseController;
@@ -11,72 +11,68 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 class Controller extends BaseController
 {
 
-    public function retSuccess($data = true): JsonResponse
+    public function ok($data = true): JsonResponse
     {
         return response()->json([
             'code' => 0,
             'data' => $data,
             'msg' => 'success',
+            'ts' => time(),
         ]);
     }
 
-    public function retError(int $code = -1, string $msg = '', array $data = [], array $params = [])
+    public function fail(int $code = -1, string $msg = '', array $data = [], array $params = [])
     {
-        throw new HttpError($code, $msg, $data, $params);
+        throw new LogicException($code, $msg, $data, $params);
     }
 
-    public function getParam(Request $request, array $fieldList = []): array
+    public function getUid(Request $r)
     {
-        return $this->_validData($request->query->all(), $fieldList);
+        return $r->offsetGet('sys_uid', 0);
     }
 
-    public function getData(Request $request, array $fieldList = []): array
+    /**
+     * get from query prarms
+     * @param Request $r
+     * @param array $fieldList
+     * @return array
+     */
+    public function getQuery(Request $r, array $fieldList = []): array
     {
-        return $this->_validData($request->json()->all(), $fieldList);
+        return Validator::valid($r->query->all(), $fieldList);
     }
 
-    protected function getUid(Request $request): int
+    /**
+     * get from json body
+     * @param Request $r
+     * @param array $fieldList
+     * @return array
+     */
+    public function getData(Request $r, array $fieldList = []): array
     {
-        return empty($request->jwt['uid']) ? 0 : (int) $request->jwt['uid'];
+        return Validator::valid($r->json()->all(), $fieldList);
     }
 
-    protected function getRealIP(Request $r): string
+    /**
+     * get from formdata
+     * @param Request $r
+     * @param array $fieldList
+     * @return array
+     */
+    public function getForm(Request $r, array $fieldList = []): array
     {
-        return $r->realIp ?? '';
+        return validator::valid($r->input(), $fieldList);
     }
 
+    /**
+     * 校验数据
+     * @param array $data
+     * @param array $fieldList
+     * @return array
+     */
     protected function validData(array $data, array $fieldList = []): array
     {
-        return $this->_validData($data, $fieldList);
-    }
-
-    private function _validData(array $data, array $fieldList = []): array
-    {
-        $rules = [];
-        $safeData = [];
-        foreach ($fieldList as $k => $v) {
-            $rules[$k] = isset($v['rule']) ? $v['rule'] : '';
-        }
-        Validator::check($data, $rules);
-        // option: default => null, ignore => [], json => false, settype = ''
-        foreach ($fieldList as $k => $v) {
-            if (isset($data[$k])) {
-                $val = $data[$k];
-                if (!empty($v['ignore']) && in_array($val, $v['ignore'])) {
-                    continue;
-                }
-                if (!empty($v['settype'])) {
-                    \settype($val, $v['settype']);
-                }
-                if (!empty($v['json']) && $v['json']) {
-                    $val = \json_decode($val, true);
-                }
-                $safeData[$k] = $val;
-            } else {
-                isset($v['default']) && $safeData[$k] = $v['default'];
-            }
-        }
-        return $safeData;
+        return Validator::valid($data, $fieldList);
     }
 
 }

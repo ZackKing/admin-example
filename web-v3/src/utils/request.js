@@ -44,8 +44,16 @@ service.interceptors.response.use(
   response => {
     const res = response.data
     const store = useUserStore()
+    if (typeof res.code === 'undefined') {
+      ElMessage({
+        message: res.msg ?? 'Wrong response data format! Please contact the system administrator!',
+        type: 'error',
+        duration: 5 * 1000
+      })
+      return Promise.reject(new Error('Error Response Data'))
+    }
 
-    if ((RE_LOGIN_CODE.indexOf(res.code) !== -1)) {
+    if (RE_LOGIN_CODE.indexOf(res.code) !== -1) { // for relogin
       if (router.currentRoute.path !== '/login') {
         ElMessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
           confirmButtonText: 'Re-Login',
@@ -66,9 +74,17 @@ service.interceptors.response.use(
       const error = new Error(res.msg || 'Error')
       error.code = res.code
       return Promise.reject(error)
-    } else {
+    } else { // other error
       if (res.code !== 0) {
-        return res
+        // return res
+        ElMessage({
+          message: res.msg || 'Error',
+          type: 'error'
+        })
+        const error = new Error(res.msg || 'Error')
+        error.code = res.code
+        error.data = res.data ?? {}
+        return Promise.reject(error)
       } else {
         return res
       }

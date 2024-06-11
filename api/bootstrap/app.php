@@ -60,8 +60,6 @@ $app->singleton(
 
 $app->configure('app');
 $app->configure('database');
-$app->configure('jwt');
-$app->configure('redis');
 
 /*
 |--------------------------------------------------------------------------
@@ -79,8 +77,8 @@ $app->configure('redis');
 // ]);
 
 $app->routeMiddleware([
-    'jwt' => App\Http\Middleware\JWTMiddleware::class,
-    'permission' => App\Http\Middleware\PermissionMiddleware::class,
+    'auth' => App\Http\Middleware\Auth::class,
+    'access' => App\Http\Middleware\Access::class,
 ]);
 
 /*
@@ -110,7 +108,7 @@ $app->routeMiddleware([
 $app->router->group([
     'namespace' => 'App\Http\Controllers',
 ], function ($router) {
-    require __DIR__ . '/../routes/web.php';
+    require __DIR__ . '/../routes/api.php';
 });
 
 return $app;

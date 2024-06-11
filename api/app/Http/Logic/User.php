@@ -3,25 +3,25 @@
 namespace App\Http\Logic;
 
 use App\Components\Helper;
-use App\Model\Group;
-use App\Model\GroupUser;
-use App\Model\User as UserMdl;
+use App\Models\Admin\Group;
+use App\Models\Admin\GroupUser;
+use App\Models\Admin\User as UserMdl;
 
 class User extends Logic
 {
     public function info(int $uid, array $cloumns = []): array
     {
-        return UserMdl::getInstance()->takeFirst(['uid' => $uid], $cloumns);
+        return UserMdl::instance()->takeFirst(['uid' => $uid], $cloumns);
     }
 
     public function edit(int $uid, array $data): int
     {
         if (!empty($data['name'])) { // check name unique
-            if (UserMdl::getInstance()->checkUserNameExist($data['name'], $uid)) {
-                $this->throwHttpError(10007);
+            if (UserMdl::instance()->checkUserNameExist($data['name'], $uid)) {
+                $this->throw(10007);
             }
         }
-        return UserMdl::getInstance()->update(['uid' => $uid], $data);
+        return UserMdl::instance()->update(['uid' => $uid], $data);
     }
 
     public function search(array $search = [], array $option = []): array
@@ -34,7 +34,7 @@ class User extends Logic
         foreach ($search as $k => $v) {
             switch ($k) {
                 case 'group_ids':
-                    $uids = GroupUser::getInstance()->getUids($search['group_ids']);
+                    $uids = GroupUser::instance()->getUids($search['group_ids']);
                     if (!$uids) {
                         return $data;
                     }
@@ -45,13 +45,13 @@ class User extends Logic
                     break;
             }
         }
-        $mdl = UserMdl::getInstance();
+        $mdl = UserMdl::instance();
         $data['total'] = $mdl->count($where);
         if ($data['total'] > 0) {
             $where['LIMIT'] = [$option['offset'], $option['limit']];
             $where['ORDER'] = $option['orderBy'];
             empty($option['columns']) && $option['columns'] = $mdl->getColumns();
-            $data['list'] = UserMdl::getInstance()->take(
+            $data['list'] = UserMdl::instance()->take(
                 $where,
                 $option['columns']
             );
@@ -65,9 +65,9 @@ class User extends Logic
         if (!$uids) {
             return [];
         }
-        $groupUser = GroupUser::getInstance()->take(['uid' => $uids]);
+        $groupUser = GroupUser::instance()->take(['uid' => $uids]);
         $gids = array_column($groupUser, 'gid');
-        $groupList = Group::getInstance()->take(['id' => $gids], $cloumns);
+        $groupList = Group::instance()->take(['id' => $gids], $cloumns);
         $groupHash = Helper::value2key($groupList, 'id');
         $hash = Helper::value2key($list, 'uid');
         foreach ($groupUser as $k => $v) {
@@ -81,11 +81,11 @@ class User extends Logic
 
     public function add(array $data): int
     {
-        $mdl = UserMdl::getInstance();
+        $mdl = UserMdl::instance();
         if ($mdl->checkUserNameExist($data['name'], 0)) {
-            $this->throwHttpError(10007);
+            $this->throw(10007);
         }
-        $authLogic = Auth::getInstance();
+        $authLogic = Auth::instance();
         $data['salt'] = $authLogic->genSalt();
         $data['password'] = $authLogic->encodePwd($data['password'], $data['salt']);
         $data['status'] = UserMdl::MAP_STSTUA['valid'];
