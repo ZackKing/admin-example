@@ -273,7 +273,6 @@ class UserController extends Controller
             'password' => ['rule' => 'required|string|min:6'],
             // 'real_name' => ['rule' => 'required|string'],
             // 'mobile' => ['rule' => 'required|string'],
-            'department' => ['rule' => 'required|string'],
             'email' => ['rule' => 'required|string'],
             'desc' => ['rule' => 'string'],
         ]);

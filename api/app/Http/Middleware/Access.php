@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Components\Helper;
+use App\Models\Admin\AccessLog;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -18,28 +19,30 @@ class Access
      */
     public function handle(Request $r, Closure $next)
     {
-        // TOOD: check api auth
-        $r->offsetSet('sys_access_id', date('YmdHis', time()) . uniqid());
-        $this->_log($r);
-        return $next($r);
+        $r->offsetSet('sys_access_id', uniqid(date('YmdH', time())));
+        $res = $next($r);
+        $this->_log($r, $res->original ?? []);
+        return $res;
     }
 
-    private function _log(Request $r)
+    private function _log(Request $r, array $resData = [])
     {
         if (!env('APP_DEBUG', false) && $r->method() == 'GET') { // don't log GET
             return;
         }
 
         $log = [
-            'access_id' => $r->offsetGet('sys_access_id'),
+            'access_id' => $r->offsetGet('sys_access_id', ''),
+            'uid' => $r->offsetGet('sys_uid', 0),
             'method' => $r->method(),
             'path' => $r->path(),
             'header' => json_encode($r->header()),
-            'query' => json_encode($r->query->all()),
-            'body' => json_encode($r->json()->all() ?: $r->input()),
+            'query' => json_encode($r->query->all(), JSON_UNESCAPED_UNICODE),
+            'body' => json_encode($r->json()->all() ?: $r->input(), JSON_UNESCAPED_UNICODE),
             'ip' => Helper::realIp(),
+            'response' => json_encode($resData, JSON_UNESCAPED_UNICODE),
         ];
-        // TODO: 投递MQ
+        AccessLog::instance()->insert($log);
         Log::info('access_log', $log);
     }
 

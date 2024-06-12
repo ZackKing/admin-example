@@ -4,6 +4,7 @@ USE `admin`;
 
 CREATE TABLE `access_log` (
     `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+    `access_id` varchar(255) NOT NULL,
     `uid` int(11) unsigned NOT NULL COMMENT 'user.id',
     `method` varchar(255) NOT NULL COMMENT 'request method',
     `path` varchar(255) NOT NULL COMMENT 'path',
@@ -11,6 +12,7 @@ CREATE TABLE `access_log` (
     `query` json NOT NULL COMMENT 'http query',
     `body` json NOT NULL COMMENT 'http body',
     `ip` varchar(32) NOT NULL COMMENT 'client ip',
+    `response` json NOT NULL,
     `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
