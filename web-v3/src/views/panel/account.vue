@@ -1,11 +1,11 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <el-form :inline="true" :model="filter">
+    <div class="container-header">
+      <el-form :inline="true" :model="filter" class="header-filter">
         <el-form-item label="Account:">
           <el-input v-model.trim="filter.name" clearable placeholder="Account" />
         </el-form-item>
-        <el-form-item>
+        <el-form-item >
           <el-button class="filter-item" :disabled="listLoading" type="primary" :icon="SearchIcon" @click="handleFilter">Search</el-button>
         </el-form-item>
         <el-form-item>
@@ -13,37 +13,38 @@
         </el-form-item>
       </el-form>
     </div>
+    <div class="container-content">
+      <el-table v-loading="listLoading" :data="list" border style="width: 100%;">
+        <el-table-column prop="uid" label="ID" />
+        <el-table-column prop="name" label="Account" />
+        <el-table-column prop="real_name" label="Name" />
+        <el-table-column prop="mobile" label="Phone" />
+        <el-table-column prop="email" label="Email" />
+        <el-table-column prop="group" label="Groups" :formatter="groupFormatter" />
+        <el-table-column label="Status">
+          <template #default="{row}">
+            <el-switch v-model="row.status" @click="switchStatus(row)" />
+          </template>
+        </el-table-column>
+        <el-table-column prop="desc" label="Remark" />
+        <el-table-column label="Actions" width="300px">
+          <template #default="{row}">
+            <el-button type="primary" @click="handleUpdate(row)">Set</el-button>
+            <el-button type="primary" @click="handleSetGroup(row)">Set Groups</el-button>
+            <el-button type="danger" @click="deleteAccount(row)">Delete</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
 
-    <el-table v-loading="listLoading" :data="list" border style="width: 100%;">
-      <el-table-column prop="uid" label="User ID" />
-      <el-table-column prop="name" label="Account" />
-      <el-table-column prop="real_name" label="Real Name" />
-      <el-table-column prop="mobile" label="Mobile" />
-      <el-table-column prop="email" label="Email" />
-      <el-table-column prop="group" label="Groups" :formatter="groupFormatter" />
-      <el-table-column label="Status">
-        <template #default="{row}">
-          <el-switch v-model="row.status" @click="switchStatus(row)" />
-        </template>
-      </el-table-column>
-      <el-table-column prop="desc" label="Remark" />
-      <el-table-column label="Actions" width="300px">
-        <template #default="{row}">
-          <el-button type="primary" @click="handleUpdate(row)">Edit</el-button>
-          <el-button type="primary" @click="handleSetGroup(row)">Set Group</el-button>
-          <el-button type="primary" @click="deleteAccount(row)">Delete</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <el-pagination
-      v-model:current-page="filter.page"
-      v-model:page-size="filter.size"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="total"
-      @size-change="getList"
-      @current-change="getList"
-    />
+      <el-pagination
+        v-model:current-page="filter.page"
+        v-model:page-size="filter.size"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
+        @size-change="getList"
+        @current-change="getList"
+      />
+    </div>
 
     <el-dialog v-model="dialogOne.dialogFormVisible" :title="dialogOne.dialogStatus === 'create' ? 'Create' : 'Edit'">
       <el-form ref="dialogOne" :rules="dialogOne.rules" :model="dialogOne.temp" label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">

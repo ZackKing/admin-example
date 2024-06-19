@@ -1,56 +1,57 @@
 <template>
   <div class="app-container">
-    <el-tabs tab-position="left">
-      <el-tab-pane label="Info">
-        <el-form ref="infoForm" :model="info" label-width="200px" :rules="infoRules">
-          <el-form-item label="User Name: " prop="name">
-            <el-input v-model="info.name" placeholder="login user name" :disabled="true" style="width: 200px" />
-          </el-form-item>
-          <el-form-item label="Real Name: " prop="real_name">
-            <el-input v-model="info.real_name" placeholder="real name" style="width: 200px" />
-          </el-form-item>
-          <el-form-item label="Mobile: " prop="mobile">
-            <el-input v-model="info.mobile" placeholder="mobile phone number" style="width: 200px" />
-          </el-form-item>
-          <el-form-item label="Email: " prop="email">
-            <el-input v-model="info.email" placeholder="email address" style="width: 200px" />
-          </el-form-item>
-          <el-form-item label="Desc: " prop="desc">
-            <el-input
-              v-model="info.desc"
-              type="textarea"
-              placeholder="user desc"
-              :autosize="{ minRows: 2, maxRows: 4}"
-              style="width: 300px"
-            />
-          </el-form-item>
-          <el-form-item>
-            <el-button
-              :disabled="infoLock"
-              type="primary"
-              @click="handleEditInfo"
-            >Submit</el-button>
-          </el-form-item>
-        </el-form>
-      </el-tab-pane>
-      <el-tab-pane label="Password">
-        <el-form ref="pwdForm" :model="pwd" label-width="200px" :rules="pwdRules">
-          <el-form-item label="Current Password: " prop="old_password">
-            <el-input v-model="pwd.old_password" placeholder="current password" style="width: 200px" show-password />
-          </el-form-item>
-          <el-form-item label="Password: " prop="password">
-            <el-input v-model="pwd.password" placeholder="new password" style="width: 200px" show-password autocomplete="off" />
-          </el-form-item>
-          <el-form-item label="Retry Password: " prop="retry_password">
-            <el-input v-model="pwd.retry_password" placeholder="retry password" style="width: 200px" show-password autocomplete="off" />
-          </el-form-item>
-          <el-form-item>
-            <el-button :disabled="pwdLock" type="primary" @click="handleEditPassword">Submit</el-button>
-          </el-form-item>
-        </el-form>
-      </el-tab-pane>
-    </el-tabs>
-
+    <div class="container-content">
+      <el-tabs tab-position="left">
+        <el-tab-pane label="Info">
+          <el-form ref="infoForm" :model="info" label-width="200px" :rules="infoRules">
+            <el-form-item label="User Name: " prop="name">
+              <el-input v-model="info.name" placeholder="login user name" :disabled="true" style="width: 200px" />
+            </el-form-item>
+            <el-form-item label="Real Name: " prop="real_name">
+              <el-input v-model="info.real_name" placeholder="real name" style="width: 200px" />
+            </el-form-item>
+            <el-form-item label="Mobile: " prop="mobile">
+              <el-input v-model="info.mobile" placeholder="mobile phone number" style="width: 200px" />
+            </el-form-item>
+            <el-form-item label="Email: " prop="email">
+              <el-input v-model="info.email" placeholder="email address" style="width: 200px" />
+            </el-form-item>
+            <el-form-item label="Desc: " prop="desc">
+              <el-input
+                v-model="info.desc"
+                type="textarea"
+                placeholder="user desc"
+                :autosize="{ minRows: 2, maxRows: 4}"
+                style="width: 300px"
+              />
+            </el-form-item>
+            <el-form-item>
+              <el-button
+                :disabled="infoLock"
+                type="primary"
+                @click="handleEditInfo"
+              >Submit</el-button>
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+        <el-tab-pane label="Password">
+          <el-form ref="pwdForm" :model="pwd" label-width="200px" :rules="pwdRules">
+            <el-form-item label="Password: " prop="old_password">
+              <el-input v-model="pwd.old_password" placeholder="password" style="width: 200px" show-password />
+            </el-form-item>
+            <el-form-item label="New Password: " prop="password">
+              <el-input v-model="pwd.password" placeholder="new password" style="width: 200px" show-password autocomplete="off" />
+            </el-form-item>
+            <el-form-item label="Confirm Password: " prop="retry_password">
+              <el-input v-model="pwd.retry_password" placeholder="confirm password" style="width: 200px" show-password autocomplete="off" />
+            </el-form-item>
+            <el-form-item>
+              <el-button :disabled="pwdLock" type="primary" @click="handleEditPassword">Submit</el-button>
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
   </div>
 </template>
 

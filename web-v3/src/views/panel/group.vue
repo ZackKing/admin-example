@@ -1,33 +1,34 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <el-form :inline="true" :model="filter">
+    <div class="container-header">
+      <el-form :inline="true" :model="filter" class="header-filter">
         <el-form-item>
           <el-button class="filter-item" :disabled="listLoading" type="primary" :icon="PlusIcon" @click="handleCreate">Add</el-button>
           <el-button class="filter-item" :disabled="listLoading" type="primary" @click="handleFilter">Refresh</el-button>
         </el-form-item>
       </el-form>
     </div>
-
-    <el-table v-loading="listLoading" :data="list" border style="width: 100%;">
-      <el-table-column prop="id" label="ID" />
-      <el-table-column prop="name" label="Name" />
-      <el-table-column prop="remark" label="Remark" />
-      <el-table-column label="Status">
-        <template #default="{row}">
-          <el-switch v-model="row.status" :disabled="row.id === 1" @click="switchStatus(row)" />
-        </template>
-      </el-table-column>
-      <el-table-column prop="created_time" label="Created Time" />
-      <el-table-column prop="updated_time" label="Updated Time" />
-      <el-table-column label="Actions" width="300">
-        <template #default="{row}">
-          <el-button :disabled="row.id === 1" type="primary" @click="handleUpdate(row)">Edit</el-button>
-          <el-button type="primary" @click="handleSetUser(row)">Set User</el-button>
-          <el-button :disabled="row.id === 1" type="primary" @click="handleSetMenu(row)">Set Menu</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+    <div class="container-content">
+      <el-table v-loading="listLoading" :data="list" border style="width: 100%;">
+        <el-table-column prop="id" label="ID" />
+        <el-table-column prop="name" label="Name" />
+        <el-table-column prop="remark" label="Remark" />
+        <el-table-column label="Status">
+          <template #default="{row}">
+            <el-switch v-model="row.status" :disabled="row.id === 1" @click="switchStatus(row)" />
+          </template>
+        </el-table-column>
+        <el-table-column prop="created_time" label="Created" />
+        <el-table-column prop="updated_time" label="Updated" />
+        <el-table-column label="Actions" width="300">
+          <template #default="{row}">
+            <el-button :disabled="row.id === 1" type="primary" @click="handleUpdate(row)">Set</el-button>
+            <el-button type="primary" @click="handleSetUser(row)">Set User</el-button>
+            <el-button :disabled="row.id === 1" type="primary" @click="handleSetMenu(row)">Set Menu</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
 
     <el-dialog v-model="dialogOne.dialogFormVisible" :title="dialogOne.dialogStatus === 'create' ? 'Create' : 'Edit'">
       <el-form ref="dialogOne" :rules="dialogOne.rules" :model="dialogOne.temp" label-position="left" label-width="100px">
@@ -69,9 +70,9 @@
             :props="dialogTwo.menuProps"
           />
         </el-form-item>
-        <el-form-item v-show="dialogTwo.dialogStatus==='setUser'" label="userList">
+        <el-form-item v-show="dialogTwo.dialogStatus==='setUser'" label="User">
           <el-checkbox-group v-model="dialogTwo.temp.uids">
-            <el-checkbox v-for="item in dialogTwo.userList" :key="item.uid" :label="item.uid">{{ item.name }}</el-checkbox>
+            <el-checkbox v-for="item in dialogTwo.userList" :key="item.uid" :label="item.name" :value="item.uid">{{ item.name }}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
       </el-form>

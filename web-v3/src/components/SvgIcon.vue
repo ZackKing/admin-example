@@ -21,19 +21,6 @@ const props = defineProps({
 
 const iconName = computed(() => `#icon-${props.name}`)
 const svgClass = computed(() => {
-  if (props.name) {
-    return `svg-icon icon-${props.name}`
-  }
-  return 'svg-icon'
+  return `w-3.5 h-3.5 fill-current align-middle ${props.name ? 'icon-' + props.name : ''}`
 })
 </script>
-
-<style lang='scss'>
-.svg-icon {
-  width: 1em;
-  height: 1em;
-  fill: currentColor;
-  vertical-align: middle;
-  color: #fff;
-}
-</style>

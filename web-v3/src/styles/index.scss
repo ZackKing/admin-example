@@ -1,9 +1,9 @@
 @import './variables.scss';
 @import './mixin.scss';
-// @import './transition.scss';
-// @import './element.scss';
 @import './sidebar.scss';
-// @import './btn.scss';
+@import './tailwind.css';
+@import 'element-plus/dist/index.css';
+@import 'element-plus/theme-chalk/dark/css-vars.css';
 
 body {
   height: 100%;
@@ -119,9 +119,30 @@ aside {
   }
 }
 
-//main-container全局样式
 .app-container {
-  padding: 20px;
+  padding: 8px;
+}
+
+.container-header {
+  background-color: #fff;
+  padding: 0px 10px 10px 10px;
+  border-radius: 5px;
+  // box-shadow: 1px 1px 2px 0px rgba(0, 0, 0, 0.75);
+
+  .header-filter {
+    .el-form-item {
+      margin: 10px 20px 0 0;
+    }
+  }
+
+}
+
+.container-content {
+  margin-top: 10px;
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 10px;
+  // box-shadow: 1px 1px 5px 0px rgba(61, 61, 61, 0.75);
 }
 
 .components-container {

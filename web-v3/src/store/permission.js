@@ -25,8 +25,6 @@ export function filterAsyncRoutes(routes, apiRoutes, accessUrls) {
       if (item.sub_menu) {
         getAccessName(item.sub_menu)
       }
-
-      // 记录可访问的url
       accessUrls.push(item.uri)
     })
   }
@@ -69,11 +67,9 @@ export const usePermissionStore = defineStore('permission', () => {
       const aUrls = []
       const filterRoutes = filterAsyncRoutes(asyncRoutes, apiRoutes, aUrls)
 
-      // set routes
       addRoutes.value = filterRoutes
       routes.value = constantRoutes.concat(filterRoutes)
 
-      // 记录可访问的url到store，用于做button级的权限控制
       accessUrls.value = aUrls
       resolve(filterRoutes)
     })

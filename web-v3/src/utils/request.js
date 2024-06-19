@@ -4,7 +4,7 @@ import { getToken } from '@/utils/auth'
 import router from '@/router'
 import { useUserStore } from '@/store/user'
 
-const RE_LOGIN_CODE = [10001, 10002, 10003]
+const RE_LOGIN_CODE = [10001, 10002]
 
 // create an axios instance
 const service = axios.create({

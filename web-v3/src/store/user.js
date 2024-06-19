@@ -8,6 +8,7 @@ export const useUserStore = defineStore('user', () => {
   const token = ref(getToken())
   const uid = ref('')
   const name = ref('')
+  const nickname = ref('')
   const avatar = ref('')
   const roles = ref([])
 
@@ -15,6 +16,7 @@ export const useUserStore = defineStore('user', () => {
     token.value = getToken()
     uid.value = ''
     name.value = ''
+    nickname.value = ''
     avatar.value = ''
     roles.value = []
   }
@@ -47,6 +49,7 @@ export const useUserStore = defineStore('user', () => {
         roles.value = data.roles
         uid.value = data.uid
         name.value = data.name
+        nickname.value = data.real_name
         avatar.value = data.avatar
         resolve(data)
       }).catch(error => {
@@ -76,6 +79,7 @@ export const useUserStore = defineStore('user', () => {
     token,
     uid,
     name,
+    nickname,
     avatar,
     roles,
     login,

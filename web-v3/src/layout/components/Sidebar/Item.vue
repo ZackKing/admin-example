@@ -1,34 +1,20 @@
+<template>
+  <SvgIcon v-if="props.icon" :name="props.icon" />
+  <span v-if="props.title" class="ml-1">{{ props.title }}</span>
+</template>
 
-<script>
-import { h } from 'vue'
+<script setup>
+import { defineProps } from 'vue'
 import SvgIcon from '@/components/SvgIcon.vue'
 
-export default {
-  name: 'MenuItem',
-  functional: true,
-  props: {
-    icon: {
-      type: String,
-      default: ''
-    },
-    title: {
-      type: String,
-      default: ''
-    }
+const props = defineProps({
+  icon: {
+    type: String,
+    default: ''
   },
-  render() {
-    const icon = this.icon
-    const title = this.title
-    const vnodes = []
-
-    if (icon) {
-      vnodes.push(h(SvgIcon, { name: icon }))
-    }
-
-    if (title) {
-      vnodes.push(h('span', { slot: 'title' }, title))
-    }
-    return vnodes
+  title: {
+    type: String,
+    default: ''
   }
-}
+})
 </script>

@@ -14,14 +14,14 @@ function checkPermission(el, binding) {
         return accessUrls.includes(url)
       })
 
-      // 隐藏方案
+      // hidden
       // if (!hasPermission) {
       //   el.parentNode && el.parentNode.removeChild(el)
       // }
-      // 提示方案
+      // tips
       if (!hasPermission) {
         el.addEventListener('click', function (event) {
-          event.stopPropagation() // 阻止所有点击事件
+          event.stopPropagation()
           ElMessage({
             message: 'Access denied!',
             type: 'error',

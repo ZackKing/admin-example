@@ -1,35 +1,33 @@
 <template>
-  <div id="tags-view-container" class="tags-view-container">
+  <div class="tags-view-container">
     <scroll-pane ref="scrollPane" class="tags-view-wrapper">
       <router-link
         v-for="tag in visitedViews"
         ref="tag"
         :key="tag.path"
-        :class="isActive(tag) ? 'active' : ''"
+        :class="`tags-view-item ${isActive(tag) ? 'active' : ''}`"
         :to="{ path: tag.path, query: tag.query, fullPath: tag.fullPath }"
-        class="tags-view-item"
-        @click.middle.enter="!isAffix(tag) ? closeSelectedTag(tag) : ''"
         @contextmenu.prevent.enter="openMenu(tag, $event)"
       >
         {{ tag.title }}
-        <span v-if="!isAffix(tag)" class="el-icon-close" @click.prevent.stop="closeSelectedTag(tag)" />
+        <!-- <el-icon v-if="isActive(tag)" class="h-px" ><CloseBold @click="closeSelectedTag(tag)" /></el-icon> -->
       </router-link>
     </scroll-pane>
     <ul v-show="visible" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
-      <li @click="refreshSelectedTag(selectedTag)">Refresh</li>
-      <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">Close</li>
-      <li @click="closeOthersTags">Close Others</li>
+      <li @click="closeSelectedTag(selectedTag)">Close</li>
+      <li @click="closeOthersTags">Close Other</li>
       <li @click="closeAllTags(selectedTag)">Close All</li>
     </ul>
   </div>
 </template>
 
 <script>
+import { CloseBold } from '@element-plus/icons-vue'
 import ScrollPane from './ScrollPane.vue'
 import path from 'path-browserify'
 
 export default {
-  components: { ScrollPane },
+  components: { ScrollPane, CloseBold },
   data() {
     return {
       visible: false,
@@ -155,10 +153,7 @@ export default {
       if (latestView) {
         this.$router.push(latestView.fullPath)
       } else {
-        // now the default is to redirect to the home page if there is no tags-view,
-        // you can adjust it according to your needs.
         if (view.name === 'Dashboard') {
-          // to reload home page
           this.$router.replace({ path: '/redirect' + view.fullPath })
         } else {
           this.$router.push('/')
@@ -167,10 +162,10 @@ export default {
     },
     openMenu(tag, e) {
       const menuMinWidth = 105
-      const offsetLeft = this.$el.getBoundingClientRect().left // container margin left
-      const offsetWidth = this.$el.offsetWidth // container width
-      const maxLeft = offsetWidth - menuMinWidth // left boundary
-      const left = e.clientX - offsetLeft + 15 // 15: margin right
+      const offsetLeft = this.$el.getBoundingClientRect().left
+      const offsetWidth = this.$el.offsetWidth
+      const maxLeft = offsetWidth - menuMinWidth
+      const left = e.clientX - offsetLeft + 15
 
       if (left > maxLeft) {
         this.left = maxLeft
@@ -181,6 +176,7 @@ export default {
       this.top = e.clientY
       this.visible = true
       this.selectedTag = tag
+      console.log(this.selectedTag)
     },
     closeMenu() {
       this.visible = false
@@ -203,9 +199,10 @@ export default {
       cursor: pointer;
       height: 26px;
       min-width: 60px;
-      line-height: 26px;
-      border: 1px solid #d8dce5;
-      color: #495060;
+      line-height: 25px;
+      border-radius: 3px;
+      border: 1px solid #efefef;
+      color: #97a8be;
       background: #fff;
       padding: 0 8px;
       font-size: 12px;
@@ -236,11 +233,9 @@ export default {
     }
   }
   .contextmenu {
-    margin: 0;
     background: #fff;
     z-index: 3000;
     position: absolute;
-    list-style-type: none;
     padding: 5px 0;
     border-radius: 4px;
     font-size: 12px;
@@ -248,36 +243,9 @@ export default {
     color: #333;
     box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, .3);
     li {
-      margin: 0;
       padding: 7px 16px;
-      cursor: pointer;
       &:hover {
         background: #eee;
-      }
-    }
-  }
-}
-</style>
-
-<style lang="scss">
-.tags-view-wrapper {
-  .tags-view-item {
-    .el-icon-close {
-      width: 16px;
-      height: 16px;
-      vertical-align: 2px;
-      border-radius: 50%;
-      text-align: center;
-      transition: all .3s cubic-bezier(.645, .045, .355, 1);
-      transform-origin: 100% 50%;
-      &:before {
-        transform: scale(.6);
-        display: inline-block;
-        vertical-align: -3px;
-      }
-      &:hover {
-        background-color: #b4bccc;
-        color: #fff;
       }
     }
   }
