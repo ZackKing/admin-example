@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import defaultSettings from '@/settings'
+import defaultSettings from '~/settings'
 
 export const useSettingStore = defineStore('setting', () => {
   const showSettings = ref(defaultSettings.showSettings)

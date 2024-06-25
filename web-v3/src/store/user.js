@@ -1,24 +1,22 @@
-import { login as userLogin, getInfo as userGetInfo } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
-import { resetRouter } from '@/router'
+import { login as userLogin, getInfo as userGetInfo } from '~/api/user'
+import { getToken, setToken, removeToken } from '~/utils/auth'
+import { resetRouter } from '~/router'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 export const useUserStore = defineStore('user', () => {
   const token = ref(getToken())
-  const uid = ref('')
+  const uid = ref(0)
   const name = ref('')
   const nickname = ref('')
   const avatar = ref('')
-  const roles = ref([])
 
   function reset() {
     token.value = getToken()
-    uid.value = ''
+    uid.value = 0
     name.value = ''
     nickname.value = ''
     avatar.value = ''
-    roles.value = []
   }
 
   function login(userInfo) {
@@ -39,14 +37,8 @@ export const useUserStore = defineStore('user', () => {
       userGetInfo().then(res => {
         const { data } = res
         if (!data) {
-          reject('Verification failed, please Login again.')
+          reject('Auth timeout!')
         }
-        data.roles = ['admin']
-        // const { roles, name, head_icon, uid } = data
-        if (!data.roles || data.roles.length <= 0) { // roles must be a non-empty array
-          reject('getInfo: roles must be a non-null array!')
-        }
-        roles.value = data.roles
         uid.value = data.uid
         name.value = data.name
         nickname.value = data.real_name
@@ -81,7 +73,6 @@ export const useUserStore = defineStore('user', () => {
     name,
     nickname,
     avatar,
-    roles,
     login,
     getInfo,
     logout,

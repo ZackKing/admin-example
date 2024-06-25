@@ -4,8 +4,7 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue'
-import SvgIcon from '@/components/SvgIcon.vue'
+import SvgIcon from '~/components/SvgIcon.vue'
 
 const props = defineProps({
   icon: {

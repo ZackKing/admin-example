@@ -1,7 +1,7 @@
 
 import { createRouter, createWebHistory } from 'vue-router'
 
-import Layout from '@/layout'
+import Layout from '~/layout'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -35,12 +35,12 @@ const constantRoutes = [
     children: [
       {
         path: '/redirect/:path(.*)',
-        component: () => import('@/views/redirect/index')
+        component: () => import('~/views/redirect/index')
       }
     ]
   }, {
     path: '/login',
-    component: () => import('@/views/login/index'),
+    component: () => import('~/views/login'),
     hidden: true
   }, {
     path: '/self',
@@ -52,12 +52,16 @@ const constantRoutes = [
       path: 'info',
       name: '/self/info',
       hidden: true,
-      component: () => import('@/views/self/info'),
+      component: () => import('~/views/self/info'),
       meta: { title: 'Personal Info' }
     }]
   }, {
     path: '/404',
-    component: () => import('@/views/404Page'),
+    component: () => import('~/views/404Page'),
+    hidden: true
+  }, {
+    path: '/:pathMatch(.*)',
+    component: () => import('~/views/404Page'),
     hidden: true
   }, {
     path: '/',
@@ -78,7 +82,7 @@ const asyncRoutes = [
     children: [{
       path: 'index',
       name: '/home/index',
-      component: () => import('@/views/dashboard/index')
+      component: () => import('~/views/dashboard/index')
     }],
   }, {
     path: '/panel',
@@ -86,9 +90,9 @@ const asyncRoutes = [
     name: '/panel',
     alwaysShow: true,
     children: [
-      { path: 'users', name: '/panel/users', component: () => import('@/views/panel/account.vue') },
-      { path: 'groups', name: '/panel/groups', component: () => import('@/views/panel/group.vue') },
-      { path: 'menus', name: '/panel/menus', component: () => import('@/views/panel/menu.vue') },
+      { path: 'users', name: '/panel/users', component: () => import('~/views/panel/account.vue') },
+      { path: 'groups', name: '/panel/groups', component: () => import('~/views/panel/group.vue') },
+      { path: 'menus', name: '/panel/menus', component: () => import('~/views/panel/menu.vue') },
     ],
   }, {
     // path: '*',

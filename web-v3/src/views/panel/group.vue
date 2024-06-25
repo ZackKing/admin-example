@@ -97,9 +97,9 @@ import {
   updateGroup,
   setUser,
   setMenu
-} from '@/api/group'
-import { getMenuList } from '@/api/menu'
-import { getAccountList } from '@/api/account'
+} from '~/api/group'
+import { getMenuList } from '~/api/menu'
+import { getAccountList } from '~/api/account'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 export default {

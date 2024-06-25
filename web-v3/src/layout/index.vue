@@ -1,63 +1,58 @@
 <template>
   <div :class="classObj" class="app-wrapper">
     <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside" />
-    <sidebar class="sidebar-container" />
-    <div :class="{hasTagsView:needTagsView}" class="main-container">
-      <div :class="{'fixed-header':fixedHeader}">
-        <navbar />
-        <tags-view v-if="needTagsView" />
+    <Sidebar class="sidebar-container" />
+    <el-watermark :width="160" :height="40" :font="wfont" :content="wtext">
+      <!-- <div :class="{hasTagsView:needTagsView}" class="main-container" v-watermark="watermark"> -->
+      <div :class="{hasTagsView:needTagsView}" class="main-container">
+        <div :class="{'fixed-header':fixedHeader}">
+          <Navbar />
+          <TagsView v-if="needTagsView" />
+        </div>
+        <AppMain />
       </div>
-      <app-main />
-    </div>
+    </el-watermark>
   </div>
 </template>
 
-<script>
+<script setup>
 import { Navbar, Sidebar, AppMain, TagsView } from './components'
-import ResizeMixin from './mixin/ResizeHandler'
+import { ref, reactive, computed, getCurrentInstance } from 'vue'
 
+const { appContext } = getCurrentInstance()
+const store = appContext.config.globalProperties.$store
+
+const wtext = ref([store.user.name, store.user.nickname])
+const wfont = reactive({
+  color: 'rgba(0, 0, 0, .15)',
+})
+
+const sidebar = computed(() => store.app.sidebar)
+const device = computed(() => store.app.device)
+const fixedHeader = computed(() => store.settings.fixedHeader)
+const needTagsView = computed(() => store.settings.tagsView)
+const classObj = computed(() => ({
+  hideSidebar: !sidebar.value.opened,
+  openSidebar: sidebar.value.opened,
+  withoutAnimation: sidebar.value.withoutAnimation,
+  mobile: device.value === 'mobile'
+}))
+
+function handleClickOutside() {
+  store.app.closeSideBar({ withoutAnimation: false })
+}
+</script>
+
+<script>
+import ResizeMixin from './mixin/ResizeHandler'
 export default {
-  name: 'Layout',
-  components: {
-    Navbar,
-    Sidebar,
-    AppMain,
-    TagsView
-  },
   mixins: [ResizeMixin],
-  computed: {
-    sidebar() {
-      return this.$store.app.sidebar
-    },
-    device() {
-      return this.$store.app.device
-    },
-    fixedHeader() {
-      return this.$store.settings.fixedHeader
-    },
-    needTagsView() {
-      return this.$store.settings.tagsView
-    },
-    classObj() {
-      return {
-        hideSidebar: !this.sidebar.opened,
-        openSidebar: this.sidebar.opened,
-        withoutAnimation: this.sidebar.withoutAnimation,
-        mobile: this.device === 'mobile'
-      }
-    }
-  },
-  methods: {
-    handleClickOutside() {
-      this.$store.app.closeSideBar({ withoutAnimation: false })
-    }
-  }
 }
 </script>
 
 <style lang="scss" scoped>
-  @import "@/styles/mixin.scss";
-  @import "@/styles/variables.scss";
+  @import "~/styles/mixin.scss";
+  @import "~/styles/variables.scss";
 
   .app-wrapper {
     @include clearfix;

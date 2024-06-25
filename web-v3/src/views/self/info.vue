@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import { getInfo, editInfo, editPassword } from '@/api/user'
+import { getInfo, editInfo, editPassword } from '~/api/user'
 import { ElMessage } from 'element-plus'
 
 export default {

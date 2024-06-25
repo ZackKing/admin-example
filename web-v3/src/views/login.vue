@@ -28,7 +28,7 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { useUserStore } from '@/store/user'
+import { useUserStore } from '~/store/user'
 
 const validateUsername = (rule, value, callback) => {
   if (value.length === 0) {

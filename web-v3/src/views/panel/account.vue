@@ -102,8 +102,8 @@ import { Search as SearchIcon, Plus as PlusIcon } from '@element-plus/icons-vue'
 </script>
 
 <script>
-import { getAccountList, addAccount, updateAccount, setStatus, setGroup } from '@/api/account'
-import { getGroupList } from '@/api/group'
+import { getAccountList, addAccount, updateAccount, setStatus, setGroup } from '~/api/account'
+import { getGroupList } from '~/api/group'
 import { random } from 'lodash-es'
 import { ElMessage, ElMessageBox } from 'element-plus'
 

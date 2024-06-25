@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { asyncRoutes, constantRoutes } from '@/router'
+import { asyncRoutes, constantRoutes } from '~/router'
 import { useCommonStore } from './common'
 import { sortBy } from 'lodash-es'
 

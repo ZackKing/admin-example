@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { getPermissionMenu } from '@/api/common'
+import { getPermissionMenu } from '~/api/common'
 import { ref } from 'vue'
 
 // Setup Store example

@@ -26,7 +26,7 @@
 
 <script>
 import path from 'path-browserify'
-import { isExternal } from '@/utils'
+import { isExternal } from '~/utils'
 import Item from './Item'
 import AppLink from './Link'
 import FixiOSBug from './FixiOSBug'

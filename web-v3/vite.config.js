@@ -1,7 +1,7 @@
 import { defineConfig, loadEnv } from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
 import path from 'path'
-import { svgBuilder } from './src/plugins/svgBuilder'
+import { SvgBuilder } from './src/components/SvgBuilder'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import ElementPlus from 'unplugin-element-plus/vite'
@@ -14,7 +14,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [
       vuePlugin(),
-      svgBuilder('./src/icons/svg/'),
+      SvgBuilder('./src/components/icons/svg/'),
       ElementPlus({}),
       AutoImport({
         resolvers: [ElementPlusResolver()],
@@ -27,7 +27,7 @@ export default defineConfig(({ mode }) => {
     resolve: {
       extensions: ['.mjs', '.js', '.jsx', '.json', '.vue'],
       alias: {
-        '@': path.resolve(__dirname, './src'),
+        '~': path.resolve(__dirname, './src'),
       },
     },
 

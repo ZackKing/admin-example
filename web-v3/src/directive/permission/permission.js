@@ -1,4 +1,4 @@
-import { usePermissionStore } from '@/store/permission'
+import { usePermissionStore } from '~/store/permission'
 import { ElMessage } from 'element-plus'
 
 function checkPermission(el, binding) {

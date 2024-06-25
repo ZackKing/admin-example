@@ -1,17 +1,21 @@
 <template>
-  <div class="dashboard-container">
-    <div class="dashboard-text">name: {{ name }}</div>
-    <!-- <div class="dashboard-text">roles: <span v-for="role in roles" :key="role">{{ role }}</span></div> -->
+  <div class="app-container">
+    <div class="container-content">
+      <el-row>
+        Welcom {{ name }}
+      </el-row>
+    </div>
   </div>
 </template>
 
+
 <script setup>
-import { useUserStore } from '@/store/user'
+import { useUserStore } from '~/store/user'
 import { ref } from 'vue'
 
 const name = ref('')
 const store = useUserStore()
-name.value = store.name
+name.value = store.nickname
 
 </script>
 

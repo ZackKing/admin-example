@@ -32,8 +32,8 @@
 </template>
 
 <script setup>
-import { getMenuList } from '@/api/menu'
-import SvgIcon from '@/components/SvgIcon.vue'
+import { getMenuList } from '~/api/menu'
+import SvgIcon from '~/components/SvgIcon.vue'
 import { onMounted, ref } from 'vue'
 import { Refresh as RefreshIcon } from '@element-plus/icons-vue'
 

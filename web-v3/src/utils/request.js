@@ -1,8 +1,8 @@
 import axios from 'axios'
 import { ElMessageBox, ElMessage } from 'element-plus'
-import { getToken } from '@/utils/auth'
-import router from '@/router'
-import { useUserStore } from '@/store/user'
+import { getToken } from '~/utils/auth'
+import router from '~/router'
+import { useUserStore } from '~/store/user'
 
 const RE_LOGIN_CODE = [10001, 10002]
 
