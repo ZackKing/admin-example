@@ -6,21 +6,25 @@
           <el-input v-model.trim="filter.name" clearable placeholder="Account" />
         </el-form-item>
         <el-form-item >
-          <el-button class="filter-item" :disabled="listLoading" type="primary" :icon="SearchIcon" @click="handleFilter">Search</el-button>
+          <el-button class="filter-item" :disabled="loading" type="primary" :icon="SearchIcon" @click="handleFilter">Search</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button class="filter-item" :disabled="listLoading" type="primary" :icon="PlusIcon" @click="handleCreate">Add</el-button>
+          <el-button class="filter-item" :disabled="loading" type="primary" :icon="PlusIcon" @click="handleCreate">Add</el-button>
         </el-form-item>
       </el-form>
     </div>
     <div class="container-content">
-      <el-table v-loading="listLoading" :data="list" border style="width: 100%;">
+      <el-table v-loading="loading" :data="list" border style="width: 100%;">
         <el-table-column prop="uid" label="ID" />
         <el-table-column prop="name" label="Account" />
         <el-table-column prop="real_name" label="Name" />
         <el-table-column prop="mobile" label="Phone" />
         <el-table-column prop="email" label="Email" />
-        <el-table-column prop="group" label="Groups" :formatter="groupFormatter" />
+        <el-table-column prop="group" label="Groups">
+          <template #default="{row}">
+            <el-tag class="mr-1" v-for="g in row.group" :item="g">{{ g.name }}</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column label="Status">
           <template #default="{row}">
             <el-switch v-model="row.status" @click="switchStatus(row)" />
@@ -30,7 +34,7 @@
         <el-table-column label="Actions" width="300px">
           <template #default="{row}">
             <el-button type="primary" @click="handleUpdate(row)">Set</el-button>
-            <el-button type="primary" @click="handleSetGroup(row)">Set Groups</el-button>
+            <el-button type="primary" @click="handleSetAuth(row)">Set Groups</el-button>
             <el-button type="danger" @click="deleteAccount(row)">Delete</el-button>
           </template>
         </el-table-column>
@@ -41,13 +45,13 @@
         v-model:page-size="filter.size"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
-        @size-change="getList"
-        @current-change="getList"
+        @size-change="refresh"
+        @current-change="refresh"
       />
     </div>
 
-    <el-dialog v-model="dialogOne.dialogFormVisible" :title="dialogOne.dialogStatus === 'create' ? 'Create' : 'Edit'">
-      <el-form ref="dialogOne" :rules="dialogOne.rules" :model="dialogOne.temp" label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
+    <el-dialog v-model="dialogOne.visible" :title="dialogOne.dialogStatus === 'create' ? 'ADD' : 'EDIT'">
+      <el-form ref="dialogOneRef" v-loading="dialogOne.loading" :rules="dialogOne.rules" :model="dialogOne.temp" label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
         <el-form-item label="Account" prop="name">
           <el-input v-model="dialogOne.temp.name" />
         </el-form-item>
@@ -57,10 +61,10 @@
         <el-form-item v-else label="Password">
           <el-button type="primary" @click="resetPwd(dialogOne.temp)">Reset Password</el-button>
         </el-form-item>
-        <el-form-item label="RealName" prop="real_name">
+        <el-form-item label="Name" prop="real_name">
           <el-input v-model="dialogOne.temp.real_name" />
         </el-form-item>
-        <el-form-item label="Mobile" prop="mobile">
+        <el-form-item label="Phone" prop="mobile">
           <el-input v-model="dialogOne.temp.mobile" />
         </el-form-item>
         <el-form-item label="Email" prop="email">
@@ -71,265 +75,224 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <div>
-          <el-button @click="dialogOne.dialogFormVisible = false">Cancel</el-button>
-          <el-button type="primary" @click="dialogOne.dialogStatus==='create' ? createData() : updateData()">Confirm</el-button>
-        </div>
+        <el-button @click="dialogOne.visible = false">Cancel</el-button>
+        <el-button type="primary" :disabled="dialogOne.loading" @click="dialogOne.dialogStatus==='create' ? createData() : updateData()">Confirm</el-button>
       </template>
     </el-dialog>
 
-    <el-dialog v-model="dialogTwo.dialogFormVisible" title="Edit">
-      <el-form ref="dialogTwo" label-position="left" label-width="150px">
-        <el-form-item v-show="dialogTwo.dialogStatus==='setGroup'" label="Group List">
-          <el-checkbox-group v-model="dialogTwo.temp.group">
-            <el-checkbox v-for="item in dialogTwo.groupList" :key="item.id" style="min-width: 160px" :label="item.id">{{ item.name }}</el-checkbox>
-          </el-checkbox-group>
+    <el-dialog v-model="dialogTwo.visible" title="Auth" center>
+      <el-form v-loading="dialogTwo.loading" ref="dialogTwoRef" label-position="left" class="px-8">
+        <el-form-item label="Groups">
+          <el-select v-model="dialogTwo.temp.group" multiple filterable placeholder="Select">
+            <el-option v-for="item in options.group" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
         </el-form-item>
       </el-form>
       <template #footer>
-        <div>
-          <el-button @click="dialogTwo.dialogFormVisible = false">Cancel</el-button>
-          <el-button type="primary" @click="toSetGroup()">Confirm</el-button>
-        </div>
+        <el-button @click="dialogTwo.visible = false">Cancel</el-button>
+        <el-button type="primary" @click="toSetAuth()" :disabled="dialogTwo.loading">Confirm</el-button>
       </template>
     </el-dialog>
-
   </div>
 </template>
 
 <script setup>
+import { ref, reactive, onMounted } from 'vue'
 import { Search as SearchIcon, Plus as PlusIcon } from '@element-plus/icons-vue'
-</script>
-
-<script>
 import { getAccountList, addAccount, updateAccount, setStatus, setGroup } from '~/api/account'
 import { getGroupList } from '~/api/group'
 import { random } from 'lodash-es'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
-export default {
-  name: 'AccountManage',
-  components: {},
-  data() {
-    return {
-      list: null,
-      total: 0,
-      listLoading: true,
-      filter: {
-        page: 1,
-        size: 20,
-        name: ''
-      },
-      dialogOne: {
-        temp: {
-          uid: undefined,
-          name: '',
-          real_name: '',
-          mobile: '',
-          email: '',
-          password: '',
-          desc: ''
-        },
-        dialogFormVisible: false,
-        dialogStatus: '',
-        rules: {
-          name: [{ required: true, min: 6, max: 32, message: 'account must be 6 to 32 digits', trigger: 'change' }],
-          real_name: [{ required: true, message: 'real name is required', trigger: 'change' }],
-          password: [{ required: true, min: 6, message: 'password must be greater than or equal to 6 digits', trigger: 'change' }],
-          mobile: [{ required: true, message: 'mobile is required', trigger: 'change' }],
-          email: [{ required: true, message: 'email is required', trigger: 'change' }],
-        }
-      },
-      dialogTwo: {
-        temp: {
-          uid: undefined,
-          group: []
-        },
-        dialogFormVisible: false,
-        dialogStatus: '',
-        groupList: []
-      },
-      options: {
-        department: [
-          { value: 'Admin' },
-          { value: 'Others' },
-        ]
-      },
-    }
+const list = ref(null)
+const total = ref(0)
+const loading = ref(true)
+const filter = reactive({ page: 1, size: 20, name: '' })
+
+const dialogOne = reactive({
+  loading: false,
+  temp: {
+    uid: undefined,
+    name: '',
+    real_name: '',
+    mobile: '',
+    email: '',
+    password: '',
+    desc: ''
   },
-  created() {
-    this.getList()
-    this.getGroupList()
+  visible: false,
+  dialogStatus: '',
+  rules: {
+    name: [{ required: true, min: 6, max: 32, message: 'Account must be between 6 and 32 bits', trigger: 'change' }],
+    real_name: [{ required: true, message: 'Name require!', trigger: 'change' }],
+    password: [{ required: true, min: 6, max: 32, message: 'Password must be between 6 and 32 bits', trigger: 'change' }],
+    mobile: [{ required: true, message: 'Phone require!', trigger: 'change' }],
+  }
+})
+
+const dialogTwo = reactive({
+  loading: false,
+  temp: {
+    uid: undefined,
+    group: [],
   },
-  methods: {
-    getList() {
-      this.listLoading = true
-      getAccountList(this.filter).then(response => {
-        this.list = response.data.list.map((item) => {
-          item.status = !!item.status
-          item.groupList = item.group || []
-          item.group = item.group ? item.group.map(it => {
-            return it.id
-          }) : []
-          return item
-        })
-        this.total = response.data.total
-        this.listLoading = false
-      })
-    },
-    getGroupList() {
-      getGroupList(this.filter).then(response => {
-        this.dialogTwo.groupList = response.data
-      })
-    },
-    handleFilter() {
-      this.filter.page = 1
-      this.getList()
-    },
-    resetTemp() {
-      this.dialogOne.temp = {
-        uid: undefined,
-        name: '',
-        real_name: '',
-        mobile: '',
-        email: '',
-        password: '',
-        desc: ''
-      }
-    },
-    handleCreate() {
-      this.resetTemp()
-      this.dialogOne.dialogStatus = 'create'
-      this.dialogOne.dialogFormVisible = true
-      // this.$nextTick(() => {
-      //   this.$refs['dialogOne'].clearValidate()
-      // })
-    },
-    createData() {
-      this.$refs['dialogOne'].validate((valid) => {
-        if (valid) {
-          addAccount(this.dialogOne.temp).then(() => {
-            this.handleFilter()
-            this.dialogOne.dialogFormVisible = false
-            ElMessage({
-              title: 'Success',
-              message: 'Created Successfully',
-              type: 'success',
-              duration: 2000
-            })
-          })
-        }
-      })
-    },
-    handleUpdate(row) {
-      this.dialogOne.temp = Object.assign({}, row)
-      this.dialogOne.dialogFormVisible = true
-      this.dialogOne.dialogStatus = 'edit'
-      // this.$nextTick(() => {
-      //   this.$refs['dialogOne'].clearValidate()
-      // })
-    },
-    updateData() {
-      this.$refs['dialogOne'].validate((valid) => {
-        if (valid) {
-          const tempData = Object.assign({}, this.dialogOne.temp)
-          delete tempData.password
-          updateAccount(tempData).then(() => {
-            const index = this.list.findIndex(v => v.id === this.dialogOne.temp.id)
-            this.list.splice(index, 1, this.dialogOne.temp)
-            this.dialogOne.dialogFormVisible = false
-            ElMessage({
-              title: 'Success',
-              message: 'Update Successfully',
-              type: 'success',
-              duration: 2000
-            })
-          })
-        }
-      })
-    },
-    switchStatus(row) {
-      ElMessageBox.confirm('Please confirm the operation?', 'Warning', {
-        confirmButtonText: 'Confirm',
-        cancelButtonText: 'Cancel',
-        type: 'warning'
-      }).then(() => {
-        setStatus({ status: !row.status ? 0 : 1, uid: row.uid }).then(() => {
-          this.dialogOne.dialogFormVisible = false
-          ElMessage({
-            title: 'Success',
-            message: 'Update Successfully',
-            type: 'success',
-            duration: 2000
-          })
-        })
-      }).catch(err => {
-        console.error(err)
-        row.status = !row.status
-      })
-    },
-    deleteAccount(row) {
-      ElMessageBox.confirm(
-        'Delete this account. Are you sure?',
-        'Warning',
-        {
-          confirmButtonText: 'Confirm',
-          cancelButtonText: 'Cancel',
-          type: 'warning'
-        }).then(() => {
-        setStatus({ status: 2, uid: row.uid }).then(() => {
-          ElMessage({ title: 'Success', message: 'Update Successfully', type: 'success' })
-          this.getList()
-        })
-      })
-    },
-    resetPwd(row) {
-      ElMessageBox.confirm('Reset this user\'s password. Are you sure?', 'Warning', {
-        confirmButtonText: 'Confirm',
-        cancelButtonText: 'Cancel',
-        type: 'warning'
-      }).then(() => {
-        const password = `Admin${random(10000, 99999)}`
-        updateAccount({ uid: row.uid, password }).then(rs => {
-          ElMessageBox.confirm(`New password: ${password}`, 'Warning', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
-            type: 'warning'
-          })
-        })
-      })
-    },
-    handleSetGroup(row) {
-      this.dialogTwo.dialogStatus = 'setGroup'
-      this.dialogTwo.temp = {
-        uid: row.uid,
-        group: row.group
-      }
-      this.dialogTwo.dialogFormVisible = true
-    },
-    toSetGroup() {
-      setGroup({
-        id: this.dialogTwo.temp.uid,
-        group_ids: this.dialogTwo.temp.group
-      }).then(() => {
-        this.dialogTwo.dialogFormVisible = false
-        const index = this.list.findIndex(v => v.uid === this.dialogTwo.temp.uid)
-        this.list.splice(index, 1, { ...this.list[index], group: this.dialogTwo.temp.group })
-        ElMessage({
-          title: 'Success',
-          message: 'Update Successfully',
-          type: 'success',
-          duration: 2000
-        })
-      })
-    },
-    groupFormatter(row) {
-      let str = ''
-      row.groupList.forEach(e => {
-        str += e.name + ', '
-      })
-      return str.replace(/, $/gi, '')
-    }
+  visible: false,
+  dialogStatus: '',
+  groupList: []
+})
+
+const options = reactive({
+  group: [],
+})
+
+const dialogOneRef = ref(null)
+const dialogTwoRef = ref(null)
+
+onMounted(() => {
+  refresh()
+  initOptions()
+})
+
+function refresh() {
+  loading.value = true
+  getAccountList(filter).then(rs => {
+    list.value = rs.data.list.map((item) => {
+      item.status = !!item.status
+      item.groupIds = item.group ? item.group.map(it => it.id) : []
+      return item
+    })
+    total.value = rs.data.total
+    loading.value = false
+  })
+}
+
+function initOptions () {
+  const allFilter = { page: 1, size: 9999 }
+  getGroupList(allFilter).then(rs => {
+    options.group = rs.data
+  })
+}
+
+function handleFilter() {
+  filter.page = 1
+  refresh()
+}
+
+function resetTemp() {
+  dialogOne.temp = {
+    uid: undefined,
+    name: '',
+    real_name: '',
+    mobile: '',
+    email: '',
+    password: '',
+    desc: ''
   }
 }
+
+function handleCreate() {
+  resetTemp()
+  dialogOne.dialogStatus = 'create'
+  dialogOne.visible = true
+}
+
+function createData() {
+  dialogOneRef.value.validate((valid) => {
+    if (valid) {
+      dialogOne.loading = true
+      addAccount(dialogOne.temp).then(() => {
+        handleFilter()
+        dialogOne.visible = false
+        ElMessage({ title: 'Success', message: 'Success!', type: 'success', duration: 2000 })
+      }).finally(() => {
+        dialogOne.loading = false
+      })
+    }
+  })
+}
+
+function handleUpdate(row) {
+  dialogOne.temp = Object.assign({}, row)
+  dialogOne.visible = true
+  dialogOne.dialogStatus = 'edit'
+}
+
+function updateData() {
+  dialogOneRef.value.validate((valid) => {
+    if (valid) {
+      dialogOne.loading = true
+      const tempData = Object.assign({}, dialogOne.temp)
+      delete tempData.password
+      updateAccount(tempData).then(() => {
+        const index = list.value.findIndex(v => v.id === dialogOne.temp.id)
+        list.value.splice(index, 1, dialogOne.temp)
+        dialogOne.visible = false
+        ElMessage({ title: 'Success', message: 'Update Success!', type: 'success', duration: 2000})
+      }).finally(() => {
+        dialogOne.loading = false
+      })
+    }
+  })
+}
+
+function switchStatus(row) {
+  ElMessageBox.confirm('Please confirm the operation?', 'Warning', {
+    confirmButtonText: 'Confirm',
+    cancelButtonText: 'Cancel',
+    type: 'warning'
+  }).then(() => {
+    setStatus({ status: !row.status ? 0 : 1, uid: row.uid }).then(() => {
+      dialogOne.visible = false
+      ElMessage({
+        title: 'Success',
+        message: 'Update Success!',
+        type: 'success',
+        duration: 2000
+      })
+    })
+  }).catch(err => {
+    console.error(err)
+    row.status = !row.status
+  })
+}
+
+function deleteAccount(row) {
+  ElMessageBox.confirm('Confirm Delete User: ' + row.name, 'Warning', { confirmButtonText: 'Confirm', cancelButtonText: 'Cancel', type: 'warning' }).then(() => {
+    setStatus({ status: 2, uid: row.uid }).then(() => {
+      ElMessage({ title: 'Success', message: 'Delete Success!', type: 'success' })
+      refresh()
+    })
+  })
+}
+
+function resetPwd(row) {
+  ElMessageBox.confirm('Confirm Reset Password?', 'Warning', { confirmButtonText: 'Confirm', cancelButtonText: 'Cancel', type: 'warning' }).then(() => {
+    const password = `Admin${random(100000, 999999)}`
+    updateAccount({ uid: row.uid, password }).then(rs => {
+      ElMessageBox.confirm(`New Password: ${password}`, 'New Password', { confirmButtonText: 'Ok', cancelButtonText: 'Close', type: 'warning' })
+    })
+  })
+}
+
+function handleSetAuth(row) {
+  dialogTwo.dialogStatus = 'setGroup'
+  dialogTwo.temp = {
+    uid: row.uid,
+    group: row.groupIds,
+  }
+  dialogTwo.visible = true
+}
+
+async function toSetAuth() {
+  dialogTwo.loading = true
+  await setGroup({
+    id: dialogTwo.temp.uid,
+    group_ids: dialogTwo.temp.group
+  })
+  dialogTwo.loading = false
+  dialogTwo.visible = false
+  ElMessage({ title: 'Success', message: 'Update Success!', type: 'success', duration: 2000 })
+  refresh()
+}
+
 </script>
