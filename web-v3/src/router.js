@@ -5,8 +5,7 @@ import Layout from '~/layout'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
- * Detail see: https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
- *
+ * 
  * hidden: true                   if set true, item will not show in the sidebar(default is false)
  * alwaysShow: true               if set true, will always show the root menu
  *                                if not set alwaysShow, when item has more than one children route,
@@ -14,7 +13,6 @@ import Layout from '~/layout'
  * redirect: noRedirect           if set noRedirect will no redirect in the breadcrumb
  * name:'router-name'             the name is used by <keep-alive> (must set!!!)
  * meta : {
-    roles: ['admin','editor']    control the page roles (you can set multiple roles)
     title: 'title'               the name show in sidebar and breadcrumb (recommend set)
     icon: 'svg-name'             the icon show in the sidebar
     breadcrumb: false            if set false, the item will hidden in breadcrumb(default is true)
@@ -25,22 +23,19 @@ import Layout from '~/layout'
 /**
  * constantRoutes
  * a base page that does not have permission requirements
- * all roles can be accessed
  */
 const constantRoutes = [
   {
     path: '/redirect',
     component: Layout,
     hidden: true,
-    children: [
-      {
+    children: [{
         path: '/redirect/:path(.*)',
         component: () => import('~/views/redirect/index')
-      }
-    ]
+    }]
   }, {
     path: '/login',
-    component: () => import('~/views/login'),
+    component: () => import('~/views/login/index'),
     hidden: true
   }, {
     path: '/self',
@@ -53,7 +48,7 @@ const constantRoutes = [
       name: '/self/info',
       hidden: true,
       component: () => import('~/views/self/info'),
-      meta: { title: 'Personal Info' }
+      meta: { title: 'Info' }
     }]
   }, {
     path: '/404',
@@ -71,28 +66,27 @@ const constantRoutes = [
 
 /**
  * asyncRoutes
- * the routes that need to be dynamically loaded based on user roles
  */
 const asyncRoutes = [
   {
     path: '/home',
-    name: '/home',
-    redirect: '/home/index',
+    name: 'home',
+    redirect: 'home/index',
     component: Layout,
     children: [{
       path: 'index',
-      name: '/home/index',
+      name: 'home/index',
       component: () => import('~/views/dashboard/index')
     }],
   }, {
     path: '/panel',
     component: Layout,
-    name: '/panel',
+    name: 'panel',
     alwaysShow: true,
     children: [
-      { path: 'users', name: '/panel/users', component: () => import('~/views/panel/account.vue') },
-      { path: 'groups', name: '/panel/groups', component: () => import('~/views/panel/group.vue') },
-      { path: 'menus', name: '/panel/menus', component: () => import('~/views/panel/menu.vue') },
+      { path: 'users', name: 'panel/users', component: () => import('~/views/panel/user.vue') },
+      { path: 'groups', name: 'panel/groups', component: () => import('~/views/panel/group.vue') },
+      { path: 'menus', name: 'panel/menus', component: () => import('~/views/panel/menu.vue') },
     ],
   }, {
     // path: '*',

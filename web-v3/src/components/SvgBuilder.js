@@ -49,7 +49,7 @@ function findSvgFile(dir) {
   return svgRes
 }
 
-export const SvgBuilder = (path, perfix = 'icon') => {
+export const svgBuilder = (path, perfix = 'icon') => {
   if (path === '') return
   idPerfix = perfix
   const res = findSvgFile(path)

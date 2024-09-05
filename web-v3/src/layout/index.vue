@@ -2,30 +2,25 @@
   <div :class="classObj" class="app-wrapper">
     <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside" />
     <Sidebar class="sidebar-container" />
-    <el-watermark :width="160" :height="40" :font="wfont" :content="wtext">
-      <!-- <div :class="{hasTagsView:needTagsView}" class="main-container" v-watermark="watermark"> -->
-      <div :class="{hasTagsView:needTagsView}" class="main-container">
-        <div :class="{'fixed-header':fixedHeader}">
-          <Navbar />
-          <TagsView v-if="needTagsView" />
-        </div>
-        <AppMain />
+    <div :class="{hasTagsView:needTagsView}" class="main-container" v-watermark="watermark">
+      <div :class="{'fixed-header':fixedHeader}">
+        <Navbar />
+        <TagsView v-if="needTagsView" />
       </div>
-    </el-watermark>
+      <AppMain />
+    </div>
   </div>
 </template>
 
 <script setup>
 import { Navbar, Sidebar, AppMain, TagsView } from './components'
-import { ref, reactive, computed, getCurrentInstance } from 'vue'
+import { ref, computed, getCurrentInstance } from 'vue'
 
 const { appContext } = getCurrentInstance()
 const store = appContext.config.globalProperties.$store
 
-const wtext = ref([store.user.name, store.user.nickname])
-const wfont = reactive({
-  color: 'rgba(0, 0, 0, .15)',
-})
+const watermark = ref('')
+watermark.value = `${store.user.name} - ${store.user.nickname}`
 
 const sidebar = computed(() => store.app.sidebar)
 const device = computed(() => store.app.device)

@@ -1,25 +1,33 @@
 <template>
   <div class="login-container">
-    <el-form ref="loginFormRef" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
+    <el-form ref="loginFormRef" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on"
+      label-position="left">
 
       <div class="title-container">
         <h3 class="title">Admin System</h3>
       </div>
 
       <el-form-item prop="account">
-        <span class="svg-container"><SvgIcon name="user" /></span>
-        <el-input ref="account" v-model.trim="loginForm.account" placeholder="account" name="account" type="text" tabindex="1" auto-complete="on" />
+        <span class="svg-container">
+          <SvgIcon name="user" />
+        </span>
+        <el-input ref="account" v-model.trim="loginForm.account" placeholder="Account" name="account" type="text"
+          tabindex="1" auto-complete="on" />
       </el-form-item>
 
       <el-form-item prop="password">
         <span class="svg-container">
           <SvgIcon name="password" />
         </span>
-        <el-input :key="passwordType" ref="passwordRef" v-model.trim="loginForm.password" :type="passwordType" placeholder="password" name="password" tabindex="2" auto-complete="on" @keyup.enter="handleLogin" />
-        <span class="show-pwd" @click="showPwd"><SvgIcon :name="passwordType === 'password' ? 'eye' : 'eye-open'" /></span>
+        <el-input :key="passwordType" ref="passwordRef" v-model.trim="loginForm.password" :type="passwordType"
+          placeholder="password" name="password" tabindex="2" auto-complete="on" @keyup.enter="handleLogin" />
+        <span class="show-pwd mt-3" @click="showPwd">
+          <SvgIcon :name="passwordType === 'password' ? 'eye' : 'eye-open'" />
+        </span>
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.enter.prevent="handleLogin">Login</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;"
+        @click.enter.prevent="handleLogin">Login</el-button>
 
     </el-form>
   </div>
@@ -32,7 +40,7 @@ import { useUserStore } from '~/store/user'
 
 const validateUsername = (rule, value, callback) => {
   if (value.length === 0) {
-    callback(new Error('Please enter the user name'))
+    callback(new Error('Account Empty'))
   } else {
     callback()
   }
@@ -40,7 +48,7 @@ const validateUsername = (rule, value, callback) => {
 
 const validatePassword = (rule, value, callback) => {
   if (value.length === 0) {
-    callback(new Error('Please enter the password'))
+    callback(new Error('Password Empty'))
   } else {
     callback()
   }
@@ -84,7 +92,7 @@ const handleLogin = () => {
         router.push({ path: redirect.value || '/' })
         loading.value = false
       }).catch((err) => {
-        console.log(err)
+        console.error(err)
         loading.value = false
         return false
       })
@@ -202,6 +210,9 @@ $light_gray: #eee;
   }
 
   .show-pwd {
+    position: absolute;
+    right: 10px;
+    top: 7px;
     font-size: 16px;
     color: $dark_gray;
     cursor: pointer;

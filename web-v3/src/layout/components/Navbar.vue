@@ -4,7 +4,7 @@
 
     <breadcrumb class="breadcrumb-container" />
 
-    <div class="h-full float-right focus:outline-none">
+    <div class="h-full mr-2 float-right focus:outline-none">
       <!-- <span class="h-full text-center leading-[48px]">{{ nickname }}</span> -->
       <el-dropdown>
         <div class="h-full w-30 p-2">
@@ -14,7 +14,7 @@
         <template #dropdown>
           <el-dropdown-menu>
             <router-link to="/self/info">
-              <el-dropdown-item>Info</el-dropdown-item>
+              <el-dropdown-item>User Info</el-dropdown-item>
             </router-link>
             <el-dropdown-item @click="logout">Logout</el-dropdown-item>
           </el-dropdown-menu>
@@ -38,7 +38,7 @@ const sidebar = ref(store.sidebar)
 const nickname = ref(userStore.nickname)
 const avatar = ref(userStore.avatar)
 if (!avatar.value) {
-  avatar.value = '/favicon.ico'
+  avatar.value = '/img/default_user.png'
 }
 
 function toggleSideBar() {

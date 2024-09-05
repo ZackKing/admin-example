@@ -24,7 +24,7 @@ export default {
   },
   data() {
     return {
-      title: 'Admin',
+      title: 'Admin System',
       title_min: 'Admin',
       logo: ''
     }
@@ -72,7 +72,6 @@ export default {
       font-weight: 600;
       line-height: 70px;
       font-size: 20px;
-      font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
       vertical-align: middle;
     }
   }

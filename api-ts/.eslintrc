@@ -1,0 +1,26 @@
+{
+    "env": {
+      "es2021": true,
+      "node": true
+    },
+    "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+    "overrides": [],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+      "ecmaVersion": "latest",
+      "sourceType": "module"
+    },
+    "plugins": ["@typescript-eslint"],
+    "rules": {
+      "strict": 1,
+      "quotes": [1, "single"],
+      "semi": [2, "never"], // no semi
+      "no-multi-spaces": 0,
+      "no-extra-semi": 2,
+      "no-var": "warn",
+  
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/prefer-namespace-keyword": "off"
+    }
+  }
+  

@@ -22,12 +22,10 @@ app.use(ElementPlus)
 import svgIcon from '~/components/SvgIcon.vue'
 app.component('SvgIcon', svgIcon)
 
-// permission
-import '~/permission'
-
 // directive
-import directives from '~/directive/install'
-directives.install(app)
+import '~/permission' // permission control
+import directive from '~/directive/directive'
+directive.install(app)
 
 app.config.productionTip = false
 

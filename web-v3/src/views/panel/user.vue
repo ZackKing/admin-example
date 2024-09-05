@@ -14,13 +14,13 @@
       </el-form>
     </div>
     <div class="container-content">
-      <el-table v-loading="loading" :data="list" border style="width: 100%;">
+      <el-table v-loading="loading" :data="list" border>
         <el-table-column prop="uid" label="ID" />
         <el-table-column prop="name" label="Account" />
         <el-table-column prop="real_name" label="Name" />
         <el-table-column prop="mobile" label="Phone" />
         <el-table-column prop="email" label="Email" />
-        <el-table-column prop="group" label="Groups">
+        <el-table-column prop="group" label="Group">
           <template #default="{row}">
             <el-tag class="mr-1" v-for="g in row.group" :item="g">{{ g.name }}</el-tag>
           </template>
@@ -33,9 +33,9 @@
         <el-table-column prop="desc" label="Remark" />
         <el-table-column label="Actions" width="300px">
           <template #default="{row}">
-            <el-button type="primary" @click="handleUpdate(row)">Set</el-button>
-            <el-button type="primary" @click="handleSetAuth(row)">Set Groups</el-button>
-            <el-button type="danger" @click="deleteAccount(row)">Delete</el-button>
+            <el-button type="primary" @click="handleUpdate(row)">Edit</el-button>
+            <el-button type="primary" @click="handleSetAuth(row)">Auth</el-button>
+            <!-- <el-button type="danger" @click="deleteAccount(row)">Delete</el-button> -->
           </template>
         </el-table-column>
       </el-table>
@@ -50,7 +50,7 @@
       />
     </div>
 
-    <el-dialog v-model="dialogOne.visible" :title="dialogOne.dialogStatus === 'create' ? 'ADD' : 'EDIT'">
+    <el-dialog v-model="dialogOne.visible" :title="dialogOne.dialogStatus === 'create' ? 'Add' : 'Edit'">
       <el-form ref="dialogOneRef" v-loading="dialogOne.loading" :rules="dialogOne.rules" :model="dialogOne.temp" label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
         <el-form-item label="Account" prop="name">
           <el-input v-model="dialogOne.temp.name" />
@@ -59,7 +59,7 @@
           <el-input v-model="dialogOne.temp.password" />
         </el-form-item>
         <el-form-item v-else label="Password">
-          <el-button type="primary" @click="resetPwd(dialogOne.temp)">Reset Password</el-button>
+          <el-button type="primary" @click="resetPwd(dialogOne.temp)">Reset</el-button>
         </el-form-item>
         <el-form-item label="Name" prop="real_name">
           <el-input v-model="dialogOne.temp.real_name" />
@@ -82,8 +82,8 @@
 
     <el-dialog v-model="dialogTwo.visible" title="Auth" center>
       <el-form v-loading="dialogTwo.loading" ref="dialogTwoRef" label-position="left" class="px-8">
-        <el-form-item label="Groups">
-          <el-select v-model="dialogTwo.temp.group" multiple filterable placeholder="Select">
+        <el-form-item label="Group">
+          <el-select v-model="dialogTwo.temp.group" multiple filterable placeholder="select group">
             <el-option v-for="item in options.group" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </el-form-item>
@@ -123,10 +123,10 @@ const dialogOne = reactive({
   visible: false,
   dialogStatus: '',
   rules: {
-    name: [{ required: true, min: 6, max: 32, message: 'Account must be between 6 and 32 bits', trigger: 'change' }],
-    real_name: [{ required: true, message: 'Name require!', trigger: 'change' }],
-    password: [{ required: true, min: 6, max: 32, message: 'Password must be between 6 and 32 bits', trigger: 'change' }],
-    mobile: [{ required: true, message: 'Phone require!', trigger: 'change' }],
+    name: [{ required: true, min: 6, max: 32, message: 'Account has 6 - 32 bit', trigger: 'change' }],
+    real_name: [{ required: true, message: 'Name required', trigger: 'change' }],
+    password: [{ required: true, min: 6, message: 'Password must more than 6 bit', trigger: 'change' }],
+    mobile: [{ required: true, message: 'Phone required', trigger: 'change' }],
   }
 })
 
@@ -161,6 +161,7 @@ function refresh() {
       item.groupIds = item.group ? item.group.map(it => it.id) : []
       return item
     })
+    console.log(list)
     total.value = rs.data.total
     loading.value = false
   })
@@ -203,7 +204,7 @@ function createData() {
       addAccount(dialogOne.temp).then(() => {
         handleFilter()
         dialogOne.visible = false
-        ElMessage({ title: 'Success', message: 'Success!', type: 'success', duration: 2000 })
+        ElMessage({ title: 'Success', message: 'OK', type: 'success', duration: 2000 })
       }).finally(() => {
         dialogOne.loading = false
       })
@@ -227,7 +228,7 @@ function updateData() {
         const index = list.value.findIndex(v => v.id === dialogOne.temp.id)
         list.value.splice(index, 1, dialogOne.temp)
         dialogOne.visible = false
-        ElMessage({ title: 'Success', message: 'Update Success!', type: 'success', duration: 2000})
+        ElMessage({ title: 'Success', message: 'OK', type: 'success', duration: 2000})
       }).finally(() => {
         dialogOne.loading = false
       })
@@ -245,7 +246,7 @@ function switchStatus(row) {
       dialogOne.visible = false
       ElMessage({
         title: 'Success',
-        message: 'Update Success!',
+        message: 'OK',
         type: 'success',
         duration: 2000
       })
@@ -257,19 +258,19 @@ function switchStatus(row) {
 }
 
 function deleteAccount(row) {
-  ElMessageBox.confirm('Confirm Delete User: ' + row.name, 'Warning', { confirmButtonText: 'Confirm', cancelButtonText: 'Cancel', type: 'warning' }).then(() => {
+  ElMessageBox.confirm('Delete User: ' + row.name, 'Warning', { confirmButtonText: 'OK', cancelButtonText: 'Cancel', type: 'warning' }).then(() => {
     setStatus({ status: 2, uid: row.uid }).then(() => {
-      ElMessage({ title: 'Success', message: 'Delete Success!', type: 'success' })
+      ElMessage({ title: 'Success', message: 'OK', type: 'success' })
       refresh()
     })
   })
 }
 
 function resetPwd(row) {
-  ElMessageBox.confirm('Confirm Reset Password?', 'Warning', { confirmButtonText: 'Confirm', cancelButtonText: 'Cancel', type: 'warning' }).then(() => {
+  ElMessageBox.confirm('Confirm?', 'Warning', { confirmButtonText: 'OK', cancelButtonText: 'Cancel', type: 'warning' }).then(() => {
     const password = `Admin${random(100000, 999999)}`
     updateAccount({ uid: row.uid, password }).then(rs => {
-      ElMessageBox.confirm(`New Password: ${password}`, 'New Password', { confirmButtonText: 'Ok', cancelButtonText: 'Close', type: 'warning' })
+      ElMessageBox.confirm(`New Password: ${password}`, 'New', { confirmButtonText: 'OK', cancelButtonText: 'Cancel', type: 'warning' })
     })
   })
 }
@@ -291,7 +292,7 @@ async function toSetAuth() {
   })
   dialogTwo.loading = false
   dialogTwo.visible = false
-  ElMessage({ title: 'Success', message: 'Update Success!', type: 'success', duration: 2000 })
+  ElMessage({ title: 'Success', message: 'OK', type: 'success', duration: 2000 })
   refresh()
 }
 

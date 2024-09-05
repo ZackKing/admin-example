@@ -4,5 +4,5 @@ docker run \
     --rm \
     --name admin-web-build \
     -v $(pwd):/work \
-    node:18-slim \
-    bash -c "/work/docker/build.sh"
+    node:20-slim \
+    bash -c "cd /work && yarn && yarn build"

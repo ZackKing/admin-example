@@ -1,0 +1,40 @@
+{
+    "app": "admin-server",
+    "env": "dev",
+    "debug": true,
+    "host": "",
+    "port": 3366,
+    "timezone": 0,
+    "app_key": "",
+    "reporter": {},
+
+    "db": {
+        "default": {
+            "host": "127.0.0.1",
+            "port": 3306,
+            "db": "admin",
+            "username": "root",
+            "password": "",
+            "min": 1,
+            "max": 10
+        }
+    },
+
+    "redis": {
+        "default": {
+            "host": "127.0.0.1",
+            "port": 6379,
+            "password": null,
+            "db": 0,
+            "prefix": ""
+        }
+    },
+
+    "jwt": {
+        "secret": "koa-jwt-secret",
+        "options": {
+            "algorithm": "HS256",
+            "expiresIn": 604800
+        }
+    }
+}

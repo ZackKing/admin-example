@@ -65,15 +65,14 @@
     }
 
     // menu hover
-    .submenu-title-noDropdown,
-    .el-sub-menu__title {
+    .submenu-title-noDropdown, .el-sub-menu__title {
       color: #fff;
       &:hover {
         background-color: $menuHover !important;
       }
     }
 
-    .is-active>.el-sub-menu__title {
+    .is-active, .is-active>.el-sub-menu__title {
       color: $subMenuActiveText !important;
     }
 

@@ -6,4 +6,4 @@ docker run \
     -v $(pwd):/work \
     -p 8088:8088 \
     node:20-slim \
-    bash -c "chmod +x /work/docker/dev.sh && /work/docker/dev.sh"
+    bash -c "cd /work && yarn && yarn dev"

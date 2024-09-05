@@ -10,7 +10,7 @@
         @contextmenu.prevent.enter="openMenu(tag, $event)"
       >
         {{ tag.title }}
-        <!-- <el-icon v-if="isActive(tag)" class="h-px" ><CloseBold @click="closeSelectedTag(tag)" /></el-icon> -->
+        <el-icon v-if="isActive(tag)" class="h-px" ><CloseBold @click="closeSelectedTag(tag)" /></el-icon>
       </router-link>
     </scroll-pane>
     <ul v-show="visible" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
@@ -176,7 +176,6 @@ export default {
       this.top = e.clientY
       this.visible = true
       this.selectedTag = tag
-      console.log(this.selectedTag)
     },
     closeMenu() {
       this.visible = false
