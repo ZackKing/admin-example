@@ -103,4 +103,48 @@ export default class comm {
     return id - this.BASE_NUM
   }
 
+  static vsprintf(format: string, args: any[]): string {
+    let i = 0
+    return format.replace(/%(\d*\$)?([sdif])/g, (sub, pos, spec) => {
+      let j = i++
+      if (pos) { // Adjust for 1-based pos spec like %1$s, %2$d, etc.
+        j = parseInt(pos) - 1
+      }
+      const arg = args[j]
+      switch (spec) {
+        case 's': // String
+          return String(arg)
+        case 'd': // Int
+        case 'i': // Int
+          return parseInt(arg, 10).toString()
+        case 'f': // Float
+          return parseFloat(arg).toString()
+        default:
+          return sub
+      }
+    })
+  }
+
+  static genTree(list: any[] = [], key: string = 'id', pkey: string = 'pid', skey: string = 'sub'): any[] {
+    const tree: any[] = []
+    const items: KV = {}
+    list.map(v => items[v[key]] = v)
+
+    for (const k in items) {
+      if (items.hasOwnProperty(k)) {
+        const item = items[k]
+        if (items[item[pkey]]) {
+          if (!items[item[pkey]][skey]) {
+            items[item[pkey]][skey] = []
+          }
+          items[item[pkey]][skey].push(item)
+        } else {
+          tree.push(item)
+        }
+      }
+    }
+
+    return tree;
+  }
+
 }

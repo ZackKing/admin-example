@@ -28,6 +28,30 @@ export default class Controller {
     await redis.unlock(k)
   }
 
+  static ip(ctx: Koa.Context): string {
+    let realip = ''
+    if (ctx.headers['x-forwarded-for']) {
+      const forwarded = ctx.headers['x-forwarded-for'] as string
+      const ips = forwarded.split(',').map(ip => ip.trim())
+      for (const ip of ips) {
+        if (ip != 'unknown') {
+          realip = ip
+          break
+        }
+      }
+    } else if (ctx.headers['x-client-ip']) {
+      realip = ctx.headers['x-client-ip'] as string
+    } else if (ctx.req.socket.remoteAddress) {
+      realip = ctx.req.socket.remoteAddress
+    } else {
+      realip = '0.0.0.0'
+    }
+
+    const ipMatch = realip.match(/[\d\.]{7,15}/)
+    realip = ipMatch ? ipMatch[0] : '0.0.0.0'
+    return realip
+  }
+
   static _validQuery(ctx: Koa.Context, rules: Array<ValidatorRule>) {
     const query = ctx.query ?? {}
     return Controller._valid(ctx, rules, query)

@@ -70,23 +70,21 @@ const constantRoutes = [
 const asyncRoutes = [
   {
     path: '/home',
-    name: 'home',
-    redirect: 'home/index',
+    name: '/home',
+    redirect: '/home/index',
     component: Layout,
-    children: [{
-      path: 'index',
-      name: 'home/index',
-      component: () => import('~/views/dashboard/index')
-    }],
+    children: [
+      { path: '/index', name: '/home/index', component: () => import('~/views/dashboard/index.vue') },
+    ],
   }, {
     path: '/panel',
+    name: '/panel',
     component: Layout,
-    name: 'panel',
     alwaysShow: true,
     children: [
-      { path: 'users', name: 'panel/users', component: () => import('~/views/panel/user.vue') },
-      { path: 'groups', name: 'panel/groups', component: () => import('~/views/panel/group.vue') },
-      { path: 'menus', name: 'panel/menus', component: () => import('~/views/panel/menu.vue') },
+      { path: '/users', name: '/panel/users', component: () => import('~/views/panel/user.vue') },
+      { path: '/groups', name: '/panel/groups', component: () => import('~/views/panel/group.vue') },
+      { path: '/menus', name: '/panel/menus', component: () => import('~/views/panel/menu.vue') },
     ],
   }, {
     // path: '*',

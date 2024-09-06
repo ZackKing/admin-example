@@ -32,4 +32,6 @@ export default conf
 
 export const constant: KV = {
   APP_NAME: 'admin-server',
+
+  PWD_WRONG_LIMIT: 5,
 }

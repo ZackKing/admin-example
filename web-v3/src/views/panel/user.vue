@@ -161,7 +161,6 @@ function refresh() {
       item.groupIds = item.group ? item.group.map(it => it.id) : []
       return item
     })
-    console.log(list)
     total.value = rs.data.total
     loading.value = false
   })

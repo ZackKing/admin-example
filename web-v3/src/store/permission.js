@@ -11,13 +11,14 @@ import { sortBy } from 'lodash-es'
  */
 export function filterAsyncRoutes(routes, apiRoutes, accessUrls) {
   const access = {
-    '/404': { allow: true, name: '', icon: '', sort: 0 }
+    '/404': { allow: true, uri: '', name: '', icon: '', sort: 0 }
   }
 
   function getAccessName(arr) {
     arr.forEach(item => {
       access[item.uri] = {
         allow: true,
+        uri: item.uri,
         name: item.name,
         icon: item.icon,
         sort: item.sort

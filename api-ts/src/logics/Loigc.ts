@@ -18,8 +18,8 @@ export default class Logic {
    * @param data 
    * @throws LogicError
    */
-  throw(code: number, msg: string = '', data: KV = {}): never {
-    throw new LogicError(code, msg, data)
+  throw(code: number, msg: string = '', data: KV = {}, params: any[] = []): never {
+    throw new LogicError(code, msg, data, params)
   }
 
 }
