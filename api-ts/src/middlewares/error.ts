@@ -3,7 +3,7 @@ import time from '~/utils/time'
 import { log } from '~/services/log'
 import { LogicError } from '~/types/error'
 
-const code401 = new Set([100, 101])
+const code401 = new Set([10001, 10002])
 
 export default async (ctx: Koa.Context, next: Koa.Next) => {
 

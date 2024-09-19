@@ -1,15 +1,7 @@
+import { isArray } from 'lodash'
 import Model from './Model'
 
 export default class GroupUser extends Model {
-
-  private static _instance: GroupUser
-
-  static instance(): GroupUser {
-    if (!GroupUser._instance) {
-      GroupUser._instance = new GroupUser()
-    }
-    return GroupUser._instance
-  }
 
   static MAP_STATUS = {
     valid: 1,
@@ -37,9 +29,16 @@ export default class GroupUser extends Model {
     }
   }
 
-  async getGids(uid: Int): Promise<Int[]> {
-    const list = await this.find({ uid })
+  async getGids(uid: Int|Int[]): Promise<Int[]> {
+    const where: KV = {}
+    isArray(uid) ? where['uid[IN]'] = uid : where.uid = uid
+    const list = await this.find(where)
     return list.map(v => v.gid)
+  }
+  
+  async getUids(gids: Int[]): Promise<Int[]> {
+    const list = await this.find({ 'gid[IN]': gids })
+    return list.map(v => v.uid)
   }
 
 }

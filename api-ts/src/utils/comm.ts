@@ -32,7 +32,19 @@ export default class comm {
     return JSON.stringify(data)
   }
 
-  static radnomHit(odds: number, loop: Int = 1): Int {
+  static randomStr(len = 6, base: string = ''): string
+  {
+    if (!base) {
+      base = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    }
+    let str = ''
+    for (let i = 0; i < len; i++) {
+      str += base[comm.randomInt(0, base.length - 1)]
+    }
+    return str
+  }
+
+  static randomHit(odds: number, loop: Int = 1): Int {
     let hit = 0
     for (let i = 0; i < loop; i++) {
       if (Math.random() < odds) {
@@ -143,8 +155,7 @@ export default class comm {
         }
       }
     }
-
-    return tree;
+    return tree
   }
 
 }

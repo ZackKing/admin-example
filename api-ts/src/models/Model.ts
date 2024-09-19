@@ -1,8 +1,26 @@
 import { Knex } from 'knex'
 import { isArray, keys } from 'lodash'
 import DB from '~/services/db'
+import { tLog } from '~/services/log'
+
+type FindOpts = {
+  limit?: Int
+  offset?: Int
+  orderBy?: string[]
+}
 
 export default abstract class Model {
+
+  private static instances: { [key: string]: Model } = {}
+
+  static instance<T extends Model>(this: new () => T): T {
+    const className = this.name
+    if (!Model.instances[className]) {
+      Model.instances[className] = new this()
+    }
+    return Model.instances[className] as T
+  }
+
   abstract get db(): string
   abstract get table(): string
   abstract get attr(): KV
@@ -41,14 +59,14 @@ export default abstract class Model {
     return row ? row[field] : defaultVal ?? null
   }
 
-  async findWithTotal(where: KV, fields: (KV | string)[] = ['*'], opts: KV = {}): Promise<KV> {
+  async findWithTotal(where: KV, fields: (KV | string)[] = ['*'], opts: FindOpts = {}): Promise<{ list: KV[], total: Int }> {
     return {
       list: await this.find(where, fields, opts),
       total: await this.count(where)
     }
   }
 
-  async findMap(where: KV, key: string, fields: (KV | string)[] = ['*'], opts: KV = {}): Promise<KV> {
+  async findMap(where: KV, key: string, fields: (KV | string)[] = ['*'], opts: FindOpts = {}): Promise<KV> {
     const map: KV = {}
     const list = await this.find(where, fields, opts)
     list.map(v => {
@@ -57,7 +75,7 @@ export default abstract class Model {
     return map
   }
 
-  async find(where: KV, fields: (KV | string)[] = ['*'], opts: KV = {}): Promise<KV[]> {
+  async find(where: KV, fields: (KV | string)[] = ['*'], opts: FindOpts = {}): Promise<KV[]> {
     const builder = this.builderWhere(where)
     if (!isArray(fields)) fields = [fields]
     if (fields.includes('*') && this.fields.length != 0) fields = this.fields
@@ -69,17 +87,19 @@ export default abstract class Model {
     return await builder.select(fields)
   }
 
-  async insert(data: KV): Promise<number> {
+  async insert(data: KV): Promise<Int>
+  async insert(data: KV | KV[]): Promise<Int | Int[]> {
     try {
-      const [id] = await this.conn(this.table).insert(data)
-      return id || 0
+      const ids = await this.conn(this.table).insert(data)
+      return ids.length == 1 ? (ids[0] ?? 0) : ids
     } catch (error) {
+      tLog.error('model_insert', { error })
       return 0
     }
   }
 
   async update(where: KV, data: KV, limit: number = 0): Promise<number> {
-    const builder = this.builder().where(where)
+    const builder = this.builderWhere(where)
     if (limit > 0) {
       builder.limit(limit)
     }
@@ -96,6 +116,17 @@ export default abstract class Model {
     }
   }
 
+  async delete(where: KV, num: Int = 0): Promise<Int> {
+    const builder = this.builderWhere(where)
+    if (num > 0) {
+      const cnt = await builder.count()
+      if (cnt != num) {
+        return 0
+      }
+    }
+    return await builder.delete()
+  }
+
   get fields(): string[] {
     return keys(this.attr)
   }
@@ -108,26 +139,33 @@ export default abstract class Model {
     const builder = this.builder()
     for (const k in where) {
       const m = k.match(/(.*)\[(.*)\]/)
-      const v = where[k]
-      if (isArray(m)) {
-        // m = [k, field, switch] example: status[in] => [status[in], status, in]
-        switch (m[2].toLowerCase()) {
+      let v = where[k]
+      if (isArray(m) && m.length == 3) {
+        const [_, col, op] = m // example: status[in] => ['status[in]', 'status', 'in']
+        switch (op.toLowerCase()) {
           case 'in':
-            builder.whereIn(m[1], v)
+            builder.whereIn(col, v)
             break
           case '~':
+            v = `%${v}%`
           case 'like':
-            builder.whereLike(m[1], v)
+            builder.where(col, 'like', v)
             break
           case '!':
           case 'not':
-            builder.whereNot(m[1], v)
+            builder.whereNot(col, v)
             break
           case '>':
           case '>=':
           case '<':
           case '<=':
-            builder.where(m[1], m[2], v)
+            builder.where(col, op, v)
+            break
+          case '<>':
+            builder.whereBetween(col, v)
+            break
+          case '><':
+            builder.whereNotBetween(col, v)
             break
           default:
             break

@@ -226,6 +226,7 @@ function updateData() {
       updateAccount(tempData).then(() => {
         const index = list.value.findIndex(v => v.id === dialogOne.temp.id)
         list.value.splice(index, 1, dialogOne.temp)
+        handleFilter()
         dialogOne.visible = false
         ElMessage({ title: 'Success', message: 'OK', type: 'success', duration: 2000})
       }).finally(() => {

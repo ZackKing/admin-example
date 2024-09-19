@@ -48,7 +48,7 @@ export default class Auth extends Logic {
       const data = jwt.verify(token, conf.jwt.secret, conf.jwt.options)
       return data as KV
     } catch (error) {
-      throw new LogicError(101)
+      throw new LogicError(10002)
     }
   }
 
@@ -69,8 +69,27 @@ export default class Auth extends Logic {
     return constant.PWD_WRONG_LIMIT - user.pwd_wrong
   }
 
-  encodePwd(pwd: string, salt: string): string {
-    return comm.md5(`${salt}${comm.md5(pwd)}`)
+  async changePwd(uid: Int, old: string, pwd: string): Promise<boolean> {
+    if (!uid || !old || !pwd) {
+      return false
+    }
+    const mdl = UserMdl.instance()
+    const u = await mdl.findOne({ uid }, ['uid', 'password', 'salt'])
+    if (!u) {
+      return false
+    }
+
+    if (this.encodePwd(old, u.salt) != u.password) {
+      return false
+    }
+    const salt = this.genSalt()
+    const ud: KV = { 
+      salt,
+      password: this.encodePwd(pwd, salt)
+    }
+
+    const ok = await mdl.update({ uid }, ud, 1)
+    return !!ok
   }
 
   async userMenu(uid: Int): Promise<KV> {
@@ -85,11 +104,6 @@ export default class Auth extends Logic {
     return tree
   }
 
-  isSuperAdmin(gids: Int[]): boolean {
-    return gids.indexOf(1) != -1
-  }
-
-
   async getMenuTree(mids?: Int[]): Promise<KV> {
     const where:KV = { status: MenuMdl.MAP_STATUS.valid }
     if (mids && mids.length > 0) {
@@ -97,6 +111,66 @@ export default class Auth extends Logic {
     }
     const list = await MenuMdl.instance().find(where, ['*'], { orderBy: ['sort', 'asc'] })
     return comm.genTree(list, 'id', 'pid', 'sub_menu')
+  }
+
+  async setUserGroup(uid: Int, gids: Int[]): Promise<boolean> {
+    const mdl = GroupUser.instance()
+    const rows = gids.map(gid => { 
+      return { gid, uid }
+    })
+    await mdl.delete({ uid })
+    if (rows.length > 0) {
+      await mdl.insert(rows)
+    }
+    return true
+  }
+
+  async setGroupUser(gid: Int, uids: Int[]): Promise<boolean> {
+    const mdl = GroupUser.instance()
+    const rows = uids.map(uid => { 
+      return { gid, uid }
+    })
+    await mdl.delete({ gid })
+    if (rows.length > 0) {
+      await mdl.insert(rows)
+    }
+    return true
+  }
+
+  async setGroupMenu(gid: Int, mids: Int[]): Promise<boolean> {
+    const mdl = GroupMenu.instance()
+    const rows = mids.map(mid => { 
+      return { gid, mid }
+    })
+    await mdl.delete({ gid })
+    if (rows.length > 0) {
+      await mdl.insert(rows)
+    }
+    return true
+  }
+
+  async setMenuGroup(mid: Int, gids: Int[]): Promise<boolean> {
+    const mdl = GroupMenu.instance()
+    const rows = gids.map(gid => { 
+      return { gid, mid }
+    })
+    await mdl.delete({ mid })
+    if (rows.length > 0) {
+      await mdl.insert(rows)
+    }
+    return true
+  }
+
+  genSalt(): string {
+    return comm.randomStr(6)
+  }
+
+  encodePwd(pwd: string, salt: string): string {
+    return comm.md5(`${salt}${comm.md5(pwd)}`)
+  }
+
+  isSuperAdmin(gids: Int[]): boolean {
+    return gids.indexOf(1) != -1
   }
 
 }

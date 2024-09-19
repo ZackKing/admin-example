@@ -34,7 +34,7 @@ const routerMap: RouterMap = {
     { method: 'get', path: '/list', ctl: User.list },
     { method: 'get', path: '/info', ctl: User.info },
     { method: 'post', path: '/add', ctl: User.add },
-    { method: 'post', path: '/update', ctl: User.updateInfo },
+    { method: 'post', path: '/update', ctl: User.update },
     { method: 'post', path: '/status', ctl: User.status },
     { method: 'post', path: '/group', ctl: User.setGroup },
   ]

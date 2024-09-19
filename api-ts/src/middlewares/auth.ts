@@ -23,7 +23,7 @@ function _valid(ctx: Koa.Context) {
 
   const au = Auth.instance().decodeToken(token)
   if (!au || !au.uid) {
-    throw new LogicError(101)
+    throw new LogicError(10002)
   }
 
   ctx.uid = au.uid

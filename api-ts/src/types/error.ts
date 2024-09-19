@@ -21,8 +21,6 @@ export const errMsg: { [code: number]: string } = {
   2: 'Validator error',
   3: 'Locked',
 
-  100: 'Token not found',
-  101: 'Invalid Token',
   10001: 'Token Not Found!',
   10002: 'Invalid Token',
   10003: 'Account not found / Password error!',

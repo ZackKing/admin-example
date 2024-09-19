@@ -2,15 +2,6 @@ import Model from './Model'
 
 export default class AccessLog extends Model {
 
-  private static _instance: AccessLog
-
-  static instance(): AccessLog {
-    if (!AccessLog._instance) {
-      AccessLog._instance = new AccessLog()
-    }
-    return AccessLog._instance
-  }
-
   static MAP_STATUS = {
     valid: 1,
     invalid: 0,

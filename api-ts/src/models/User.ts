@@ -2,15 +2,6 @@ import Model from './Model'
 
 export default class User extends Model {
 
-  private static _instance: User
-
-  static instance(): User {
-    if (!User._instance) {
-      User._instance = new User()
-    }
-    return User._instance
-  }
-
   static MAP_STATUS = {
     valid: 1,
     invalid: 0,

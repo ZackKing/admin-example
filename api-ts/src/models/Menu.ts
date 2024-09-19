@@ -1,15 +1,7 @@
+import comm from '~/utils/comm'
 import Model from './Model'
 
 export default class Menu extends Model {
-
-  private static _instance: Menu
-
-  static instance(): Menu {
-    if (!Menu._instance) {
-      Menu._instance = new Menu()
-    }
-    return Menu._instance
-  }
 
   static MAP_STATUS = {
     valid: 1,
@@ -43,6 +35,12 @@ export default class Menu extends Model {
       created_time: 'string',
       updated_time: 'string',
     }
+  }
+
+  async getAll(tree = true): Promise<KV | KV[]>
+  {
+    const list = await this.find({})
+    return tree ? comm.genTree(list, 'id', 'pid', 'sub_menu') : list
   }
 
 }
