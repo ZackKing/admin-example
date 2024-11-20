@@ -133,7 +133,9 @@ export default {
     closeSelectedTag(view) {
       this.$store.tagsView.delView(view)
       if (this.isActive(view)) {
-        this.toLastView(this.$store.tagsView.visitedViews, view)
+        setTimeout(() => {
+          this.toLastView(this.$store.tagsView.visitedViews, view)
+        }, 100)
       }
     },
     closeOthersTags() {
