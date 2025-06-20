@@ -2,7 +2,7 @@ package main
 
 import (
 	"admin-api/internal/routers"
-	_ "admin-api/internal/services"
+	"admin-api/internal/services"
 	"admin-api/internal/services/conf"
 	"fmt"
 
@@ -11,10 +11,17 @@ import (
 )
 
 func main() {
-	r := gin.New()
+	start()
+}
 
-	r.Use(gin.Logger())
-	r.Use(gin.Recovery())
+func start() {
+	services.Init()
+
+	r := gin.New()
+	// r.Use(gin.Recovery())
+	if !conf.App.Debug {
+		gin.SetMode(gin.ReleaseMode)
+	}
 
 	routers.Init(r)
 

@@ -35,6 +35,13 @@ export default defineConfig(({ mode }) => {
       host: '0.0.0.0',
       port: 8088,
       strictPort: true,
+      proxy: {
+        '/api': {
+          target: env.VITE_BASE_API || 'http://localhost:3000',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, '')
+        }
+      }
     },
 
     build: {
@@ -53,6 +60,7 @@ export default defineConfig(({ mode }) => {
 
     define: {
       'process.env': {
+        NODE_ENV: env.VITE_NODE_ENV,
         BASE_API: env.VITE_BASE_API,
       }
     },

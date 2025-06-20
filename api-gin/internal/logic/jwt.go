@@ -12,12 +12,12 @@ type jwtLogic struct{}
 var Jwt = &jwtLogic{}
 
 type JwtClaims struct {
-	Uid int `json:"uid"`
+	Uid int32 `json:"uid"`
 	jwt.StandardClaims
 }
 
 // Gen jwt token string
-func (j *jwtLogic) GenJwtToken(uid int) (string, error) {
+func (j *jwtLogic) GenJwtToken(uid int32) (string, error) {
 	now := time.Now().Unix()
 	exp := now + int64(conf.Jwt.Exp)
 	claims := &JwtClaims{

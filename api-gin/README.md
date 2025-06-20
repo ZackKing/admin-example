@@ -2,12 +2,20 @@
 
 ## path
 
-+ configs - path in config json file (settings.json will watch)
++ configs - path in config json file
 + internal
 
 ## develop
 
+### dao gen
+
 ```shell
-    go install github.com/pilu/fresh
-    fresh
+    go run cmd/gen.go
+```
+
+### dev run and watch
+
+```shell
+    go install github.com/air-verse/air@latest
+    air
 ```

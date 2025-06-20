@@ -10,10 +10,11 @@ import (
 )
 
 type ConfigVp struct {
-	AppVp      *viper.Viper
-	DbVp       *viper.Viper
-	JwtVp      *viper.Viper
-	SettingsVp *viper.Viper
+	Path    string
+	AppVp   *viper.Viper
+	DbVp    *viper.Viper
+	JwtVp   *viper.Viper
+	RedisVp *viper.Viper
 }
 
 var Env string
@@ -21,61 +22,41 @@ var Conf *ConfigVp
 var App *AppConf
 var Db map[string]*DbConf
 var Jwt *JwtConf
-var Settings *SettingsConf
+var Redis map[string]*RedisConf
 
 var once sync.Once
 
 func InitConf(path string, env string) {
 	once.Do(func() {
-		Conf = &ConfigVp{}
+		Conf = &ConfigVp{Path: path}
 		Env = env
-		var err error
-		// app conf
-		Conf.AppVp, err = NewConfVp(Env, "app")
-		if err != nil {
-			log.Fatalf("app conf vp init err: %v", err)
-		}
-		Conf.AppVp.Unmarshal(&App)
 
-		// db conf
-		Conf.DbVp, err = NewConfVp(Env, "db")
-		if err != nil {
-			log.Fatalf("db conf vp init err: %v", err)
-		}
-		Db = make(map[string]*DbConf)
-		Conf.DbVp.Unmarshal(&Db)
-
-		// jwt conf
-		Conf.JwtVp, err = NewConfVp(Env, "jwt")
-		if err != nil {
-			log.Fatalf("jwt conf vp init err: %v", err)
-		}
-		Conf.JwtVp.Unmarshal(&Jwt)
-
-		// settings conf (will watch)
-		Conf.SettingsVp, err = NewConfVp(Env, "settings")
-		if err != nil {
-			log.Fatalf("settings conf vp init err: %v", err)
-		}
-		Conf.SettingsVp.Unmarshal(&Settings)
-		Conf.SettingsVp.OnConfigChange(func(_ fsnotify.Event) {
-			fmt.Print("configs/" + Env + "/settings.json chenged !\n")
-			Conf.SettingsVp.Unmarshal(&Settings)
+		// conf init (will watch)
+		Conf.AppVp = NewConfVp(Conf.Path, "app", &App)
+		Conf.AppVp.OnConfigChange(func(_ fsnotify.Event) {
+			fmt.Printf("configs/%s/app.json chenged !", Env)
+			Conf.AppVp.Unmarshal(&App)
 		})
-		Conf.SettingsVp.WatchConfig()
+		Conf.AppVp.WatchConfig()
 
-		fmt.Print("Conf init success! \n")
+		// conf init (not watch)
+		Conf.DbVp = NewConfVp(Conf.Path, "db", &Db)
+		Conf.RedisVp = NewConfVp(Conf.Path, "redis", &Redis)
+		Conf.JwtVp = NewConfVp(Conf.Path, "jwt", &Jwt)
+
+		log.Default().Print("Conf initialized")
 	})
 }
 
-func NewConfVp(env string, file string) (*viper.Viper, error) {
+func NewConfVp(path string, file string, vars any) *viper.Viper {
 	vp := viper.New()
+	vp.AddConfigPath(path + "/" + Env + "/")
 	vp.SetConfigName(file)
-	vp.AddConfigPath("configs/" + env + "/")
 	vp.SetConfigType("json")
 	err := vp.ReadInConfig()
 	if err != nil {
-		return nil, err
+		panic(fmt.Sprintf("%s conf vp init err: %v", file, err))
 	}
-	return vp, nil
+	vp.Unmarshal(&vars)
+	return vp
 }

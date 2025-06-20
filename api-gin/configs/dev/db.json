@@ -5,9 +5,9 @@
         "port": 3306,
         "db": "admin",
         "user": "root",
-        "password": "zack123",
+        "password": "test123456",
         "charset": "utf8mb4",
-        "maxConns": 10,
+        "maxConns": 1,
         "maxIdleConns": 1
     }
 }

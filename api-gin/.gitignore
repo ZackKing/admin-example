@@ -1,3 +1,5 @@
 vendor
+tmp
 runtime
 !runtime/.gitkeep
+*_test.go

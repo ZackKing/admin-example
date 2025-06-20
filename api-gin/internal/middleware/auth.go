@@ -1,7 +1,8 @@
 package middleware
 
 import (
-	"admin-api/internal/handler"
+	v1 "admin-api/internal/api/v1"
+	"admin-api/internal/constant"
 	"admin-api/internal/logic"
 	"fmt"
 
@@ -13,17 +14,20 @@ func Auth(c *gin.Context) {
 	if token == "" {
 		c.AbortWithStatusJSON(
 			200,
-			&handler.Res{Code: 10001, Msg: handler.GetCodeMsg(10001), Data: nil},
+			&v1.Res{Code: 10001, Msg: constant.GetCodeMsg(10001), Data: nil},
 		)
 		return
 	}
 	claims, err := logic.Jwt.ParseJwtToken(token)
 	if err != nil {
 		fmt.Printf("jwt middleware parse error: %v", err.Error())
-		c.AbortWithStatusJSON(200, &handler.Res{Code: 10002, Msg: handler.GetCodeMsg(10002), Data: nil})
+		c.AbortWithStatusJSON(200, &v1.Res{Code: 10002, Msg: constant.GetCodeMsg(10002), Data: nil})
 		return
 	}
 	c.Set("uid", claims.Uid)
+
 	c.Next()
-	println("after auth middleware")
+
+	// TODO: after auth middleware
+
 }

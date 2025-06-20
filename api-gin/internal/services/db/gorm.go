@@ -5,52 +5,44 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"sync"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+	"gorm.io/gorm/schema"
 )
 
-var dbs = make(map[string]*gorm.DB)
-var once sync.Once
-
-func GetGormDb(k string) (db *gorm.DB) {
-	db, ok := dbs[k]
-	if !ok {
-		return nil
+func NewGorm(conf *conf.DbConf) *gorm.DB {
+	sqlDB, err := sql.Open(
+		conf.Type,
+		fmt.Sprintf(
+			"%s:%s@tcp(%s:%d)/%s?charset=%s&parseTime=True&loc=Local",
+			conf.User,
+			conf.Password,
+			conf.Host,
+			conf.Port,
+			conf.Db,
+			conf.Charset,
+		),
+	)
+	if err != nil {
+		log.Fatal("sql open error: ", conf.Host, err)
 	}
-	return db
-}
 
-func InitGorm() {
-	once.Do(func() {
-		for k, v := range conf.Db {
-			sqlDB, err := sql.Open(
-				v.Type,
-				fmt.Sprintf(
-					"%s:%s@tcp(%s:%d)/%s?charset=%s&parseTime=True&loc=Local",
-					v.User,
-					v.Password,
-					v.Host,
-					v.Port,
-					v.Db,
-					v.Charset,
-				),
-			)
-			if err != nil {
-				log.Fatal("sql open error: ", k, err)
-			}
-			sqlDB.SetMaxOpenConns(v.MaxConns)
-			sqlDB.SetMaxIdleConns(v.MaxIdleConns)
+	sqlDB.SetMaxOpenConns(conf.MaxConns)
+	sqlDB.SetMaxIdleConns(conf.MaxIdleConns)
 
-			gc, err := gorm.Open(mysql.New(mysql.Config{
-				Conn: sqlDB,
-			}), &gorm.Config{})
-			if err != nil {
-				log.Fatal("gorm open error: ", k, err)
-			}
+	gconf := &gorm.Config{
+		NamingStrategy: schema.NamingStrategy{
+			SingularTable: true,
+		},
+		Logger: logger.Default.LogMode(logger.Error),
+	}
 
-			dbs[k] = gc
-		}
-	})
+	gdb, err := gorm.Open(mysql.New(mysql.Config{Conn: sqlDB}), gconf)
+	if err != nil {
+		log.Fatal("gorm open error: ", conf.Host, err)
+	}
+
+	return gdb
 }

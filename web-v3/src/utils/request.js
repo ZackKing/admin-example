@@ -5,10 +5,11 @@ import router from '~/router'
 import { useUserStore } from '~/store/user'
 
 const RE_LOGIN_CODE = [10001, 10002]
+const baseURL = process.env.NODE_ENV == 'dev' ? '/api' : process.env.BASE_API
 
 // create an axios instance
 const service = axios.create({
-  baseURL: process.env.BASE_API, // url = base url + request url
+  baseURL, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 10000 // request timeout
 })

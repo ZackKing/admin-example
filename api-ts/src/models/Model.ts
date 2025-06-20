@@ -147,6 +147,7 @@ export default abstract class Model {
             builder.whereIn(col, v)
             break
           case '~':
+          case '#':
             v = `%${v}%`
           case 'like':
             builder.where(col, 'like', v)
