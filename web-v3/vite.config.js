@@ -64,5 +64,13 @@ export default defineConfig(({ mode }) => {
         BASE_API: env.VITE_BASE_API,
       }
     },
+
+    css: {
+      preprocessorOptions: {
+        scss: {
+          silenceDeprecations: ['legacy-js-api'], // remove when sass >= 2.0.0
+        }
+      }
+    }
   }
 })
